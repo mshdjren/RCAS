@@ -1,0 +1,7 @@
+The best model is achieved at epoch-1: loss1.64793, acc-all:0.51000, acc-avg-cls:0.51000.
+The best model is achieved at epoch-2: loss1.43630, acc-all:0.59200, acc-avg-cls:0.59200.
+The best model is achieved at epoch-3: loss1.19117, acc-all:0.65200, acc-avg-cls:0.65200.
+The best model is achieved at epoch-8: loss1.23898, acc-all:0.65400, acc-avg-cls:0.65400.
+The best model is achieved at epoch-11: loss1.45407, acc-all:0.67200, acc-avg-cls:0.67200.
+The best model is achieved at epoch-12: loss1.33889, acc-all:0.69800, acc-avg-cls:0.69800.
+The best model is achieved at epoch-14: loss1.37165, acc-all:0.70200, acc-avg-cls:0.70200.

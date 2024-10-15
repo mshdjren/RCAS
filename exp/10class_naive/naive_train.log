@@ -1,0 +1,701 @@
+
+Epoch 1/100
+----------
+train
+	loss:0.566198, acc-all:0.83642, acc-avg-cls:0.44722
+test
+	loss:1.504526, acc-all:0.57273, acc-avg-cls:0.57273
+
+Epoch 2/100
+----------
+train
+	loss:0.243629, acc-all:0.92405, acc-avg-cls:0.65943
+test
+	loss:1.629600, acc-all:0.58182, acc-avg-cls:0.58182
+
+Epoch 3/100
+----------
+train
+	loss:0.197811, acc-all:0.93524, acc-avg-cls:0.69774
+test
+	loss:0.990720, acc-all:0.69636, acc-avg-cls:0.69636
+
+Epoch 4/100
+----------
+train
+	loss:0.157998, acc-all:0.94709, acc-avg-cls:0.75701
+test
+	loss:1.122245, acc-all:0.68909, acc-avg-cls:0.68909
+
+Epoch 5/100
+----------
+train
+	loss:0.120505, acc-all:0.95894, acc-avg-cls:0.82638
+test
+	loss:1.024053, acc-all:0.68727, acc-avg-cls:0.68727
+
+Epoch 6/100
+----------
+train
+	loss:0.089453, acc-all:0.96812, acc-avg-cls:0.88378
+test
+	loss:1.082314, acc-all:0.69818, acc-avg-cls:0.69818
+
+Epoch 7/100
+----------
+train
+	loss:0.072975, acc-all:0.97346, acc-avg-cls:0.88897
+test
+	loss:1.164882, acc-all:0.67273, acc-avg-cls:0.67273
+
+Epoch 8/100
+----------
+train
+	loss:0.062482, acc-all:0.97897, acc-avg-cls:0.91488
+test
+	loss:1.114028, acc-all:0.67636, acc-avg-cls:0.67636
+
+Epoch 9/100
+----------
+train
+	loss:0.048821, acc-all:0.98231, acc-avg-cls:0.94022
+test
+	loss:1.108960, acc-all:0.71636, acc-avg-cls:0.71636
+
+Epoch 10/100
+----------
+train
+	loss:0.042733, acc-all:0.98431, acc-avg-cls:0.94721
+test
+	loss:1.321685, acc-all:0.69091, acc-avg-cls:0.69091
+
+Epoch 11/100
+----------
+train
+	loss:0.044538, acc-all:0.98314, acc-avg-cls:0.95827
+test
+	loss:1.315272, acc-all:0.68000, acc-avg-cls:0.68000
+
+Epoch 12/100
+----------
+train
+	loss:0.029845, acc-all:0.98965, acc-avg-cls:0.98376
+test
+	loss:1.286314, acc-all:0.70909, acc-avg-cls:0.70909
+
+Epoch 13/100
+----------
+train
+	loss:0.024859, acc-all:0.99132, acc-avg-cls:0.98712
+test
+	loss:1.512286, acc-all:0.69455, acc-avg-cls:0.69455
+
+Epoch 14/100
+----------
+train
+	loss:0.027749, acc-all:0.99099, acc-avg-cls:0.98069
+test
+	loss:1.307941, acc-all:0.70727, acc-avg-cls:0.70727
+
+Epoch 15/100
+----------
+train
+	loss:0.014919, acc-all:0.99499, acc-avg-cls:0.99111
+test
+	loss:1.466013, acc-all:0.69091, acc-avg-cls:0.69091
+
+Epoch 16/100
+----------
+train
+	loss:0.014804, acc-all:0.99549, acc-avg-cls:0.97906
+test
+	loss:1.589387, acc-all:0.67091, acc-avg-cls:0.67091
+
+Epoch 17/100
+----------
+train
+	loss:0.020833, acc-all:0.99366, acc-avg-cls:0.98638
+test
+	loss:1.395073, acc-all:0.70727, acc-avg-cls:0.70727
+
+Epoch 18/100
+----------
+train
+	loss:0.009098, acc-all:0.99700, acc-avg-cls:0.99477
+test
+	loss:1.484755, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 19/100
+----------
+train
+	loss:0.004662, acc-all:0.99917, acc-avg-cls:0.99942
+test
+	loss:1.439631, acc-all:0.69818, acc-avg-cls:0.69818
+
+Epoch 20/100
+----------
+train
+	loss:0.006266, acc-all:0.99766, acc-avg-cls:0.99723
+test
+	loss:1.500673, acc-all:0.70909, acc-avg-cls:0.70909
+
+Epoch 21/100
+----------
+train
+	loss:0.006410, acc-all:0.99816, acc-avg-cls:0.99839
+test
+	loss:1.573254, acc-all:0.71636, acc-avg-cls:0.71636
+
+Epoch 22/100
+----------
+train
+	loss:0.001905, acc-all:0.99950, acc-avg-cls:0.99958
+test
+	loss:1.574950, acc-all:0.70000, acc-avg-cls:0.70000
+
+Epoch 23/100
+----------
+train
+	loss:0.004870, acc-all:0.99866, acc-avg-cls:0.99863
+test
+	loss:1.536639, acc-all:0.69636, acc-avg-cls:0.69636
+
+Epoch 24/100
+----------
+train
+	loss:0.009328, acc-all:0.99816, acc-avg-cls:0.99678
+test
+	loss:1.526583, acc-all:0.69273, acc-avg-cls:0.69273
+
+Epoch 25/100
+----------
+train
+	loss:0.025692, acc-all:0.99199, acc-avg-cls:0.97833
+test
+	loss:1.628592, acc-all:0.66364, acc-avg-cls:0.66364
+
+Epoch 26/100
+----------
+train
+	loss:0.016828, acc-all:0.99466, acc-avg-cls:0.98868
+test
+	loss:1.566636, acc-all:0.68000, acc-avg-cls:0.68000
+
+Epoch 27/100
+----------
+train
+	loss:0.007462, acc-all:0.99733, acc-avg-cls:0.99491
+test
+	loss:1.541078, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 28/100
+----------
+train
+	loss:0.034641, acc-all:0.98998, acc-avg-cls:0.96524
+test
+	loss:1.415575, acc-all:0.69091, acc-avg-cls:0.69091
+
+Epoch 29/100
+----------
+train
+	loss:0.027498, acc-all:0.99115, acc-avg-cls:0.98102
+test
+	loss:1.517878, acc-all:0.71091, acc-avg-cls:0.71091
+
+Epoch 30/100
+----------
+train
+	loss:0.007118, acc-all:0.99750, acc-avg-cls:0.98534
+test
+	loss:1.651632, acc-all:0.69455, acc-avg-cls:0.69455
+
+Epoch 31/100
+----------
+train
+	loss:0.016634, acc-all:0.99499, acc-avg-cls:0.97594
+test
+	loss:1.655270, acc-all:0.68364, acc-avg-cls:0.68364
+
+Epoch 32/100
+----------
+train
+	loss:0.002917, acc-all:0.99933, acc-avg-cls:0.99436
+test
+	loss:1.618343, acc-all:0.71273, acc-avg-cls:0.71273
+
+Epoch 33/100
+----------
+train
+	loss:0.001085, acc-all:0.99983, acc-avg-cls:0.99998
+test
+	loss:1.653334, acc-all:0.70000, acc-avg-cls:0.70000
+
+Epoch 34/100
+----------
+train
+	loss:0.006567, acc-all:0.99750, acc-avg-cls:0.99577
+test
+	loss:1.547509, acc-all:0.70000, acc-avg-cls:0.70000
+
+Epoch 35/100
+----------
+train
+	loss:0.001341, acc-all:0.99983, acc-avg-cls:0.99992
+test
+	loss:1.573118, acc-all:0.70727, acc-avg-cls:0.70727
+
+Epoch 36/100
+----------
+train
+	loss:0.002917, acc-all:0.99900, acc-avg-cls:0.99723
+test
+	loss:1.584252, acc-all:0.71818, acc-avg-cls:0.71818
+
+Epoch 37/100
+----------
+train
+	loss:0.000637, acc-all:0.99983, acc-avg-cls:0.99992
+test
+	loss:1.647577, acc-all:0.71818, acc-avg-cls:0.71818
+
+Epoch 38/100
+----------
+train
+	loss:0.003240, acc-all:0.99933, acc-avg-cls:0.99979
+test
+	loss:1.641527, acc-all:0.72727, acc-avg-cls:0.72727
+
+Epoch 39/100
+----------
+train
+	loss:0.000800, acc-all:0.99983, acc-avg-cls:0.99998
+test
+	loss:1.641092, acc-all:0.72000, acc-avg-cls:0.72000
+
+Epoch 40/100
+----------
+train
+	loss:0.000494, acc-all:0.99983, acc-avg-cls:0.99998
+test
+	loss:1.663934, acc-all:0.71636, acc-avg-cls:0.71636
+
+Epoch 41/100
+----------
+train
+	loss:0.000897, acc-all:0.99983, acc-avg-cls:0.99992
+test
+	loss:1.639446, acc-all:0.72364, acc-avg-cls:0.72364
+
+Epoch 42/100
+----------
+train
+	loss:0.000340, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.695402, acc-all:0.72000, acc-avg-cls:0.72000
+
+Epoch 43/100
+----------
+train
+	loss:0.001156, acc-all:0.99967, acc-avg-cls:0.99966
+test
+	loss:1.667575, acc-all:0.71455, acc-avg-cls:0.71455
+
+Epoch 44/100
+----------
+train
+	loss:0.000282, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.724764, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 45/100
+----------
+train
+	loss:0.000293, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.746743, acc-all:0.70727, acc-avg-cls:0.70727
+
+Epoch 46/100
+----------
+train
+	loss:0.002325, acc-all:0.99983, acc-avg-cls:0.99992
+test
+	loss:1.814720, acc-all:0.70000, acc-avg-cls:0.70000
+
+Epoch 47/100
+----------
+train
+	loss:0.000278, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.788835, acc-all:0.70364, acc-avg-cls:0.70364
+
+Epoch 48/100
+----------
+train
+	loss:0.000299, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.805299, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 49/100
+----------
+train
+	loss:0.000260, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.833460, acc-all:0.70364, acc-avg-cls:0.70364
+
+Epoch 50/100
+----------
+train
+	loss:0.000235, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.849070, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 51/100
+----------
+train
+	loss:0.000252, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.878573, acc-all:0.70909, acc-avg-cls:0.70909
+
+Epoch 52/100
+----------
+train
+	loss:0.000170, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.849383, acc-all:0.71273, acc-avg-cls:0.71273
+
+Epoch 53/100
+----------
+train
+	loss:0.000177, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.837264, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 54/100
+----------
+train
+	loss:0.000303, acc-all:0.99983, acc-avg-cls:0.99992
+test
+	loss:1.868626, acc-all:0.71636, acc-avg-cls:0.71636
+
+Epoch 55/100
+----------
+train
+	loss:0.000098, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.877634, acc-all:0.70909, acc-avg-cls:0.70909
+
+Epoch 56/100
+----------
+train
+	loss:0.000131, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.901287, acc-all:0.71455, acc-avg-cls:0.71455
+
+Epoch 57/100
+----------
+train
+	loss:0.000109, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.876077, acc-all:0.70727, acc-avg-cls:0.70727
+
+Epoch 58/100
+----------
+train
+	loss:0.000205, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.877169, acc-all:0.71091, acc-avg-cls:0.71091
+
+Epoch 59/100
+----------
+train
+	loss:0.000111, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.865586, acc-all:0.71273, acc-avg-cls:0.71273
+
+Epoch 60/100
+----------
+train
+	loss:0.000117, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.855389, acc-all:0.71273, acc-avg-cls:0.71273
+
+Epoch 61/100
+----------
+train
+	loss:0.000212, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.919666, acc-all:0.70909, acc-avg-cls:0.70909
+
+Epoch 62/100
+----------
+train
+	loss:0.000105, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.860405, acc-all:0.70182, acc-avg-cls:0.70182
+
+Epoch 63/100
+----------
+train
+	loss:0.000149, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.837324, acc-all:0.70909, acc-avg-cls:0.70909
+
+Epoch 64/100
+----------
+train
+	loss:0.000088, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.849426, acc-all:0.70727, acc-avg-cls:0.70727
+
+Epoch 65/100
+----------
+train
+	loss:0.000103, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.860190, acc-all:0.70909, acc-avg-cls:0.70909
+
+Epoch 66/100
+----------
+train
+	loss:0.000094, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.864691, acc-all:0.70364, acc-avg-cls:0.70364
+
+Epoch 67/100
+----------
+train
+	loss:0.000106, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.839133, acc-all:0.70727, acc-avg-cls:0.70727
+
+Epoch 68/100
+----------
+train
+	loss:0.000116, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.897905, acc-all:0.70000, acc-avg-cls:0.70000
+
+Epoch 69/100
+----------
+train
+	loss:0.000089, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.844449, acc-all:0.70909, acc-avg-cls:0.70909
+
+Epoch 70/100
+----------
+train
+	loss:0.000082, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.871221, acc-all:0.70364, acc-avg-cls:0.70364
+
+Epoch 71/100
+----------
+train
+	loss:0.000117, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.848062, acc-all:0.70909, acc-avg-cls:0.70909
+
+Epoch 72/100
+----------
+train
+	loss:0.000088, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.832615, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 73/100
+----------
+train
+	loss:0.000143, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.867482, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 74/100
+----------
+train
+	loss:0.000086, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.853150, acc-all:0.71273, acc-avg-cls:0.71273
+
+Epoch 75/100
+----------
+train
+	loss:0.000087, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.825219, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 76/100
+----------
+train
+	loss:0.000079, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.847680, acc-all:0.70727, acc-avg-cls:0.70727
+
+Epoch 77/100
+----------
+train
+	loss:0.000074, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.871846, acc-all:0.71091, acc-avg-cls:0.71091
+
+Epoch 78/100
+----------
+train
+	loss:0.000073, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.868002, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 79/100
+----------
+train
+	loss:0.000070, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.918376, acc-all:0.70364, acc-avg-cls:0.70364
+
+Epoch 80/100
+----------
+train
+	loss:0.000607, acc-all:0.99967, acc-avg-cls:0.99782
+test
+	loss:1.885474, acc-all:0.70000, acc-avg-cls:0.70000
+
+Epoch 81/100
+----------
+train
+	loss:0.000123, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.914193, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 82/100
+----------
+train
+	loss:0.000245, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.866085, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 83/100
+----------
+train
+	loss:0.000111, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.886022, acc-all:0.71818, acc-avg-cls:0.71818
+
+Epoch 84/100
+----------
+train
+	loss:0.000101, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.874053, acc-all:0.70364, acc-avg-cls:0.70364
+
+Epoch 85/100
+----------
+train
+	loss:0.000122, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.866796, acc-all:0.71455, acc-avg-cls:0.71455
+
+Epoch 86/100
+----------
+train
+	loss:0.000092, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.868808, acc-all:0.71091, acc-avg-cls:0.71091
+
+Epoch 87/100
+----------
+train
+	loss:0.000113, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.906879, acc-all:0.70364, acc-avg-cls:0.70364
+
+Epoch 88/100
+----------
+train
+	loss:0.000077, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.882905, acc-all:0.70727, acc-avg-cls:0.70727
+
+Epoch 89/100
+----------
+train
+	loss:0.000111, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.869877, acc-all:0.70727, acc-avg-cls:0.70727
+
+Epoch 90/100
+----------
+train
+	loss:0.000088, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.897007, acc-all:0.70364, acc-avg-cls:0.70364
+
+Epoch 91/100
+----------
+train
+	loss:0.000154, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.886204, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 92/100
+----------
+train
+	loss:0.000088, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.878022, acc-all:0.70909, acc-avg-cls:0.70909
+
+Epoch 93/100
+----------
+train
+	loss:0.000093, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.871475, acc-all:0.70182, acc-avg-cls:0.70182
+
+Epoch 94/100
+----------
+train
+	loss:0.000083, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.884259, acc-all:0.70000, acc-avg-cls:0.70000
+
+Epoch 95/100
+----------
+train
+	loss:0.000096, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.876897, acc-all:0.71455, acc-avg-cls:0.71455
+
+Epoch 96/100
+----------
+train
+	loss:0.000082, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.863938, acc-all:0.70545, acc-avg-cls:0.70545
+
+Epoch 97/100
+----------
+train
+	loss:0.000084, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.880355, acc-all:0.71091, acc-avg-cls:0.71091
+
+Epoch 98/100
+----------
+train
+	loss:0.000245, acc-all:0.99983, acc-avg-cls:0.99974
+test
+	loss:1.856199, acc-all:0.71273, acc-avg-cls:0.71273
+
+Epoch 99/100
+----------
+train
+	loss:0.000115, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.910082, acc-all:0.71273, acc-avg-cls:0.71273
+
+Epoch 100/100
+----------
+train
+	loss:0.000095, acc-all:1.00000, acc-avg-cls:1.00000
+test
+	loss:1.854933, acc-all:0.71091, acc-avg-cls:0.71091
+Training complete in 14m 56s

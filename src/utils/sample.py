@@ -40,7 +40,7 @@ def sample_normal(batch_size, z_dim, truncation_factor, device):
     return latents
 
 
-def sample_y(y_sampler, batch_size, num_classes, device):
+def sample_y(RUN, y_sampler, batch_size, num_classes, device):
     if y_sampler == "totally_random":
         y_fake = torch.randint(low=0, high=num_classes, size=(batch_size, ), dtype=torch.long, device=device)
 
@@ -52,6 +52,17 @@ def sample_y(y_sampler, batch_size, num_classes, device):
     elif y_sampler == "acending_all":
         batch_size = num_classes * 8
         indices = [c for c in range(num_classes)]
+    #change
+    elif y_sampler == "split_loader":
+        y_fake = torch.randint(low=RUN.remain_classes[0], high=(RUN.remain_classes[-1]+1), size=(batch_size, ), dtype=torch.long, device=device)
+        if RUN.continual:
+            y_fake = torch.randint(low=-RUN.remain_classes[-1]-1+num_classes, high=(RUN.target_classes[-1]+1), size=(batch_size, ), dtype=torch.long, device=device)
+
+    elif y_sampler == "forgetting":
+        if len(RUN.target_classes) == 1:
+            y_fake = torch.tensor([RUN.target_classes[0]] * batch_size, dtype=torch.long).to(device)
+        elif len(RUN.target_classes) > 1:
+            y_fake = torch.randint(low=RUN.target_classes[-1], high=(RUN.target_classes[0]+1), size=(batch_size, ), dtype=torch.long, device=device)
 
     elif isinstance(y_sampler, int):
         y_fake = torch.tensor([y_sampler] * batch_size, dtype=torch.long).to(device)
@@ -66,8 +77,9 @@ def sample_y(y_sampler, batch_size, num_classes, device):
     return y_fake
 
 
-def sample_zy(z_prior, batch_size, z_dim, num_classes, truncation_factor, y_sampler, radius, device):
-    fake_labels = sample_y(y_sampler=y_sampler, batch_size=batch_size, num_classes=num_classes, device=device)
+def sample_zy(RUN, z_prior, batch_size, z_dim, num_classes, truncation_factor, y_sampler, radius, device):
+    #change
+    fake_labels = sample_y(RUN, y_sampler=y_sampler, batch_size=batch_size, num_classes=num_classes, device=device)
     batch_size = fake_labels.shape[0]
 
     if z_prior == "gaussian":
@@ -102,7 +114,9 @@ def generate_images(z_prior, truncation_factor, batch_size, z_dim, num_classes, 
             else:
                 assert 0 <= truncation_factor, "truncation_factor must lie btw 0(strong truncation) ~ inf(no truncation)"
 
-    zs, fake_labels, zs_eps = sample_zy(z_prior=z_prior,
+    #change
+    zs, fake_labels, zs_eps = sample_zy(RUN=RUN,
+                                        z_prior=z_prior,
                                         batch_size=batch_size,
                                         z_dim=z_dim,
                                         num_classes=num_classes,

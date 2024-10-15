@@ -202,6 +202,14 @@ def d_vanilla(d_logit_real, d_logit_fake, DDP):
 def g_vanilla(d_logit_fake, DDP):
     return torch.mean(F.softplus(-d_logit_fake))
 
+#change
+def d_vanilla_real(d_logit_real, DDP):
+    d_loss = torch.mean(F.softplus(-d_logit_real))
+    return d_loss
+
+def d_vanilla_fake(d_logit_fake, DDP):
+    d_loss = torch.mean(F.softplus(d_logit_fake))
+    return d_loss
 
 def d_logistic(d_logit_real, d_logit_fake, DDP):
     d_loss = F.softplus(-d_logit_real) + F.softplus(d_logit_fake)
@@ -230,13 +238,28 @@ def d_hinge(d_logit_real, d_logit_fake, DDP):
 def g_hinge(d_logit_fake, DDP):
     return -torch.mean(d_logit_fake)
 
+#change
+def d_hinge_real(d_logit_real, DDP):
+    d_loss = torch.mean(F.relu(1. - d_logit_real))
+    return d_loss
+
+def d_hinge_fake(d_logit_fake, DDP):
+    d_loss = torch.mean(F.relu(1. + d_logit_fake))
+    return d_loss
 
 def d_wasserstein(d_logit_real, d_logit_fake, DDP):
     return torch.mean(d_logit_fake - d_logit_real)
 
-
 def g_wasserstein(d_logit_fake, DDP):
     return -torch.mean(d_logit_fake)
+
+#change
+def d_wasserstein_real(d_logit_real, DDP):
+    return torch.mean(-d_logit_real)
+
+
+def d_wasserstein_fake(d_logit_fake, DDP):
+    return torch.mean(d_logit_fake)
 
 
 def crammer_singer_loss(adv_output, label, DDP, **_):

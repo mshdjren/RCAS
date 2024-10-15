@@ -57,9 +57,11 @@ LOG_FORMAT = ("Step: {step:>6} "
 
 
 class WORKER(object):
+    #change
     def __init__(self, cfgs, run_name, Gen, Gen_mapping, Gen_synthesis, Dis, Gen_ema, Gen_ema_mapping, Gen_ema_synthesis,
                  ema, eval_model, train_dataloader, eval_dataloader, global_rank, local_rank, mu, sigma, real_feats, logger,
-                 aa_p, best_step, best_fid, best_ckpt_path, lecam_emas, num_eval, loss_list_dict, metric_dict_during_train):
+                 aa_p, best_step, best_fid, best_ckpt_path, lecam_emas, num_eval, loss_list_dict, metric_dict_during_train,
+                 gen_importance, dis_importance):
         self.cfgs = cfgs
         self.run_name = run_name
         self.Gen = Gen
@@ -87,7 +89,17 @@ class WORKER(object):
         self.num_eval = num_eval
         self.loss_list_dict = loss_list_dict
         self.metric_dict_during_train = metric_dict_during_train
+        #change
+        self.metric_target_new_ifid = {"target_new_ifid": []}
+        self.metric_target_forget_ifid = {"target_forget_ifid": []}
+        self.metric_remain_ifid = {"remain_ifid": []}
         self.metric_dict_during_final_eval = {}
+        #change
+        self.gen_importance = gen_importance
+        self.dis_importance = dis_importance
+        self.split_loader = cfgs.RUN.split_loader
+        # self.train_continual_loader = train_continual_loader
+        self.continual = cfgs.RUN.continual
 
         self.cfgs.define_augments(local_rank)
         self.cfgs.define_losses()
@@ -181,7 +193,8 @@ class WORKER(object):
                        entity=self.RUN.entity,
                        name=self.run_name,
                        dir=self.RUN.save_dir,
-                       resume=self.best_step > 0 and resume)
+                       id = self.run_name)
+                    #    resume=self.best_step > 0 and resume)
 
         self.start_time = datetime.now()
 
@@ -190,6 +203,7 @@ class WORKER(object):
         if self.DDP:
             self.train_dataloader.sampler.set_epoch(self.epoch_counter)
         self.train_iter = iter(self.train_dataloader)
+
 
     def sample_data_basket(self):
         try:
@@ -206,6 +220,29 @@ class WORKER(object):
         real_image_basket = torch.split(real_image_basket, self.OPTIMIZATION.batch_size)
         real_label_basket = torch.split(real_label_basket, self.OPTIMIZATION.batch_size)
         return real_image_basket, real_label_basket
+    
+    #continual
+    # def prepare_train_iter_continual(self, epoch_counter_continual):
+    #     self.epoch_counter_continual = epoch_counter_continual
+    #     if self.DDP:
+    #         self.train_continual_loader.sampler.set_epoch(self.epoch_counter_continual)
+    #     self.train_iter_continual = iter(self.train_continual_loader)
+    
+    # def sample_data_basket_continual(self):
+    #     try:
+    #         real_image_basket, real_label_basket = next(self.train_iter_continual)
+    #     except StopIteration:
+    #         self.epoch_counter_continual += 1
+    #         if self.RUN.train and self.DDP:
+    #             self.train_continual_loader.sampler.set_epoch(self.epoch_counter_continual)
+    #         else:
+    #             pass
+    #         self.train_iter_continual = iter(self.train_continual_loader)
+    #         real_image_basket, real_label_basket = next(self.train_iter_continual)
+
+    #     real_image_basket = torch.split(real_image_basket, self.OPTIMIZATION.batch_size)
+    #     real_label_basket = torch.split(real_label_basket, self.OPTIMIZATION.batch_size)
+    #     return real_image_basket, real_label_basket
 
     # -----------------------------------------------------------------------------
     # train Discriminator
@@ -225,6 +262,8 @@ class WORKER(object):
         if self.DDP*self.RUN.mixed_precision*self.RUN.synchronized_bn == 0: self.Gen.apply(misc.untrack_bn_statistics)
         # sample real images and labels from the true data distribution
         real_image_basket, real_label_basket = self.sample_data_basket()
+
+
         for step_index in range(self.OPTIMIZATION.d_updates_per_step):
             self.OPTIMIZATION.d_optimizer.zero_grad()
             for acml_index in range(self.OPTIMIZATION.acml_steps):
@@ -232,14 +271,34 @@ class WORKER(object):
                     # load real images and labels onto the GPU memory
                     real_images = real_image_basket[batch_counter].to(self.local_rank, non_blocking=True)
                     real_labels = real_label_basket[batch_counter].to(self.local_rank, non_blocking=True)
+
+                    #continual
+                    if self.continual:
+                        a=0
+                        # print("==========================before change==========================")
+                        # print(real_labels)
+                        # for i in real_labels:
+                        #     if i in self.RUN.target_classes:
+                        #         real_labels[a] += 9
+                        #     a+=1
+                        for i in real_labels:
+                            for j in self.RUN.target_classes:
+                                if i + j == self.DATA.num_classes -1:
+                                    real_labels[a] = (self.DATA.num_classes-1) - i 
+                            a+=1
+                        # print("==========================after change==========================")
+                        # print(real_labels)
+                            
+     
                     # sample fake images and labels from p(G(z), y)
+                    # change
                     fake_images, fake_labels, fake_images_eps, trsp_cost, ws, _, _ = sample.generate_images(
                         z_prior=self.MODEL.z_prior,
                         truncation_factor=-1.0,
                         batch_size=self.OPTIMIZATION.batch_size,
                         z_dim=self.MODEL.z_dim,
                         num_classes=self.DATA.num_classes,
-                        y_sampler="totally_random",
+                        y_sampler="split_loader",
                         radius=self.LOSS.radius,
                         generator=self.Gen,
                         discriminator=self.Dis,
@@ -253,7 +312,11 @@ class WORKER(object):
                         is_stylegan=self.is_stylegan,
                         style_mixing_p=self.cfgs.STYLEGAN.style_mixing_p,
                         stylegan_update_emas=True,
-                        cal_trsp_cost=True if self.LOSS.apply_lo else False)
+                        cal_trsp_cost=True if self.LOSS.apply_lo else False)   
+
+                    # print("==========================check 1111==========================")
+                    # print(fake_labels) 
+
 
                     # if LOSS.apply_r1_reg is True,
                     # let real images require gradient calculation to compute \derv_{x}Dis(x)
@@ -281,6 +344,7 @@ class WORKER(object):
                     real_dict = self.Dis(real_images_, real_labels)
                     fake_dict = self.Dis(fake_images_, fake_labels, adc_fake=self.adc_fake)
 
+
                     # accumulate discriminator output informations for logging
                     if self.AUG.apply_ada or self.AUG.apply_apa:
                         self.dis_sign_real += torch.tensor((real_dict["adv_output"].sign().sum().item(),
@@ -301,7 +365,15 @@ class WORKER(object):
                         dis_acml_loss = self.LOSS.d_loss(DDP=self.DDP, **real_dict)
                         dis_acml_loss += self.LOSS.d_loss(fake_dict["adv_output"], self.lossy, DDP=self.DDP)
                     else:
+                    #change
                         dis_acml_loss = self.LOSS.d_loss(real_dict["adv_output"], fake_dict["adv_output"], DDP=self.DDP)
+
+                        if self.cfgs.RUN.loss_check == True:
+                           dis_acml_loss_real = self.LOSS.d_loss_real(real_dict["adv_output"], DDP=self.DDP)
+                           dis_acml_loss_fake = self.LOSS.d_loss_fake(fake_dict["adv_output"], DDP=self.DDP)
+                        else:
+                            dis_acml_loss_real = None
+                            dis_acml_loss_fake = None
 
                     # calculate class conditioning loss defined by "MODEL.d_cond_mtd"
                     if self.MODEL.d_cond_mtd in self.MISC.classifier_based_GAN:
@@ -372,8 +444,12 @@ class WORKER(object):
                                                           fake_images=fake_images,
                                                           discriminator=self.Dis,
                                                           device=self.local_rank)
-                        dis_acml_loss += self.LOSS.gp_lambda * gp_loss
-
+                        #change
+                        gp_check = self.LOSS.gp_lambda * gp_loss 
+                        dis_acml_loss += self.LOSS.gp_lambda * gp_loss                    
+                    else:
+                        gp_check = None
+                    
                     # apply deep regret analysis regularization to train wasserstein GAN
                     if self.LOSS.apply_dra:
                         dra_loss = losses.cal_dra_penalty(real_images=real_images,
@@ -494,7 +570,7 @@ class WORKER(object):
         # empty cache to discard used memory
         if self.RUN.empty_cache:
             torch.cuda.empty_cache()
-        return real_cond_loss, dis_acml_loss
+        return real_cond_loss, dis_acml_loss, dis_acml_loss_real, dis_acml_loss_fake, gp_check
 
     # -----------------------------------------------------------------------------
     # train Generator
@@ -516,13 +592,14 @@ class WORKER(object):
             for acml_step in range(self.OPTIMIZATION.acml_steps):
                 with torch.cuda.amp.autocast() if self.RUN.mixed_precision and not self.is_stylegan else misc.dummy_context_mgr() as mpc:
                     # sample fake images and labels from p(G(z), y)
+                    # change
                     fake_images, fake_labels, fake_images_eps, trsp_cost, ws, info_discrete_c, info_conti_c = sample.generate_images(
                         z_prior=self.MODEL.z_prior,
                         truncation_factor=-1.0,
                         batch_size=self.OPTIMIZATION.batch_size,
                         z_dim=self.MODEL.z_dim,
                         num_classes=self.DATA.num_classes,
-                        y_sampler="totally_random",
+                        y_sampler="split_loader",
                         radius=self.LOSS.radius,
                         generator=self.Gen,
                         discriminator=self.Dis,
@@ -536,7 +613,11 @@ class WORKER(object):
                         is_stylegan=self.is_stylegan,
                         style_mixing_p=self.cfgs.STYLEGAN.style_mixing_p,
                         stylegan_update_emas=False,
-                        cal_trsp_cost=True if self.LOSS.apply_lo else False)
+                        cal_trsp_cost=True if self.LOSS.apply_lo else False)  
+
+                    # print("==========================check 1111==========================")
+                    # print(fake_labels) 
+
 
                     # blur images for stylegan3-r
                     if self.MODEL.backbone == "stylegan3" and self.STYLEGAN.stylegan3_cfg == "stylegan3-r" and self.blur_init_sigma != "N/A":
@@ -683,12 +764,25 @@ class WORKER(object):
     # -----------------------------------------------------------------------------
     # log training statistics
     # -----------------------------------------------------------------------------
-    def log_train_statistics(self, current_step, real_cond_loss, gen_acml_loss, dis_acml_loss):
+    def log_train_statistics(self, current_step, real_cond_loss, gen_acml_loss, dis_acml_loss, dis_acml_loss_real, dis_acml_loss_fake, gp_check):
         self.wandb_step = current_step + 1
         if self.MODEL.d_cond_mtd in self.MISC.classifier_based_GAN:
             cls_loss = real_cond_loss.item()
         else:
             cls_loss = "N/A"
+
+        #chnage
+        if self.cfgs.LOSS.apply_gp:
+            gp_check = gp_check.item()
+        else:
+            gp_check = "N/A"
+
+        if self.cfgs.RUN.loss_check:
+            dis_acml_loss_real = dis_acml_loss_real.item()
+            dis_acml_loss_fake = dis_acml_loss_fake.item()
+        else:
+            dis_acml_loss_real = "N/A"
+            dis_acml_loss_fake = "N/A"
 
         log_message = LOG_FORMAT.format(
             step=current_step + 1,
@@ -699,6 +793,9 @@ class WORKER(object):
             cls_loss=cls_loss,
             topk=int(self.topk) if self.LOSS.apply_topk else "N/A",
             aa_p=self.aa_p if self.AUG.apply_ada or self.AUG.apply_apa else "N/A",
+            dis_loss_real=dis_acml_loss_real,
+            dis_loss_fake=dis_acml_loss_fake,
+            gp_check = gp_check
         )
         self.logger.info(log_message)
 
@@ -707,6 +804,9 @@ class WORKER(object):
             "gen_loss": gen_acml_loss.item(),
             "dis_loss": dis_acml_loss.item(),
             "cls_loss": 0.0 if cls_loss == "N/A" else cls_loss,
+            "dis_loss_real": 0.0 if self.cfgs.RUN.loss_check == False else dis_acml_loss_real,
+            "dis_loss_fake": 0.0 if self.cfgs.RUN.loss_check == False else dis_acml_loss_fake,
+            "gp_check": 0.0 if self.cfgs.LOSS.apply_gp == False else gp_check
         }
 
         wandb.log(loss_dict, step=self.wandb_step)
@@ -816,29 +916,56 @@ class WORKER(object):
             generator, generator_mapping, generator_synthesis = self.gen_ctlr.prepare_generator()
             metric_dict = {}
 
-            fake_feats, fake_probs, fake_labels = features.generate_images_and_stack_features(
-                                                                   generator=generator,
-                                                                   discriminator=self.Dis,
-                                                                   eval_model=self.eval_model,
-                                                                   num_generate=self.num_eval[self.RUN.ref_dataset],
-                                                                   y_sampler="totally_random",
-                                                                   batch_size=self.OPTIMIZATION.batch_size,
-                                                                   z_prior=self.MODEL.z_prior,
-                                                                   truncation_factor=self.RUN.truncation_factor,
-                                                                   z_dim=self.MODEL.z_dim,
-                                                                   num_classes=self.DATA.num_classes,
-                                                                   LOSS=self.LOSS,
-                                                                   RUN=self.RUN,
-                                                                   MODEL=self.MODEL,
-                                                                   is_stylegan=self.is_stylegan,
-                                                                   generator_mapping=generator_mapping,
-                                                                   generator_synthesis=generator_synthesis,
-                                                                   quantize=True,
-                                                                   world_size=self.OPTIMIZATION.world_size,
-                                                                   DDP=self.DDP,
-                                                                   device=self.local_rank,
-                                                                   logger=self.logger,
-                                                                   disable_tqdm=self.global_rank != 0)
+            #change
+            if self.split_loader:
+                fake_feats, fake_probs, fake_labels = features.generate_images_and_stack_features(
+                                                                    generator=generator,
+                                                                    discriminator=self.Dis,
+                                                                    eval_model=self.eval_model,
+                                                                    num_generate=self.num_eval[self.RUN.ref_dataset],
+                                                                    y_sampler="split_loader",
+                                                                    batch_size=self.OPTIMIZATION.batch_size,
+                                                                    z_prior=self.MODEL.z_prior,
+                                                                    truncation_factor=self.RUN.truncation_factor,
+                                                                    z_dim=self.MODEL.z_dim,
+                                                                    num_classes=self.DATA.num_classes,
+                                                                    LOSS=self.LOSS,
+                                                                    RUN=self.RUN,
+                                                                    MODEL=self.MODEL,
+                                                                    is_stylegan=self.is_stylegan,
+                                                                    generator_mapping=generator_mapping,
+                                                                    generator_synthesis=generator_synthesis,
+                                                                    quantize=True,
+                                                                    world_size=self.OPTIMIZATION.world_size,
+                                                                    DDP=self.DDP,
+                                                                    device=self.local_rank,
+                                                                    logger=self.logger,
+                                                                    disable_tqdm=self.global_rank != 0)
+                                                                    
+            else:
+                fake_feats, fake_probs, fake_labels = features.generate_images_and_stack_features(
+                                                        generator=generator,
+                                                        discriminator=self.Dis,
+                                                        eval_model=self.eval_model,
+                                                        num_generate=self.num_eval[self.RUN.ref_dataset],
+                                                        y_sampler="totally_random",
+                                                        batch_size=self.OPTIMIZATION.batch_size,
+                                                        z_prior=self.MODEL.z_prior,
+                                                        truncation_factor=self.RUN.truncation_factor,
+                                                        z_dim=self.MODEL.z_dim,
+                                                        num_classes=self.DATA.num_classes,
+                                                        LOSS=self.LOSS,
+                                                        RUN=self.RUN,
+                                                        MODEL=self.MODEL,
+                                                        is_stylegan=self.is_stylegan,
+                                                        generator_mapping=generator_mapping,
+                                                        generator_synthesis=generator_synthesis,
+                                                        quantize=True,
+                                                        world_size=self.OPTIMIZATION.world_size,
+                                                        DDP=self.DDP,
+                                                        device=self.local_rank,
+                                                        logger=self.logger,
+                                                        disable_tqdm=self.global_rank != 0)
 
             if ("fid" in metrics or "prdc" in metrics) and self.global_rank == 0:
                 self.logger.info("{num_images} real images is used for evaluation.".format(num_images=len(self.eval_dataloader.dataset)))
@@ -859,6 +986,8 @@ class WORKER(object):
                             eval_model=self.RUN.eval_backbone, step=step, num=str(self.num_eval[self.RUN.ref_dataset]), Top1=top1))
                         self.logger.info("{eval_model} Top5 acc: (Step: {step}, {num} generated images): {Top5}".format(
                             eval_model=self.RUN.eval_backbone, step=step, num=str(self.num_eval[self.RUN.ref_dataset]), Top5=top5))
+                    #change
+                    kl_score = kl_score.tolist()
                     metric_dict.update({"IS": kl_score, "Top1_acc": top1, "Top5_acc": top5})
                     if writing:
                         wandb.log({"IS score": kl_score}, step=self.wandb_step)
@@ -921,6 +1050,15 @@ class WORKER(object):
                                                               value_dict=metric_dict,
                                                               step=step,
                                                               interval=self.RUN.save_freq)
+
+                    print("=====================save_dict check===================")
+                    print("save_dict", save_dict)
+                    print("metric_dict_during_train", self.metric_dict_during_train)
+
+
+                    misc.save_dict_npy(directory=join(self.RUN.save_dir, "statistics", self.run_name, "train" if training else "eval"),
+                                       name="metrics",
+                                       dictionary=save_dict)
                 else:
                     save_dict = misc.accm_values_convert_dict(list_dict=self.metric_dict_during_final_eval,
                                                               value_dict=metric_dict,
@@ -962,23 +1100,46 @@ class WORKER(object):
         if self.Gen_ema is not None:
             g_ema_states = {"state_dict": Gen_ema.state_dict()}
 
-        misc.save_model(model="G", when=when, step=step, ckpt_dir=self.RUN.ckpt_dir, states=g_states)
-        misc.save_model(model="D", when=when, step=step, ckpt_dir=self.RUN.ckpt_dir, states=d_states)
+        # misc.save_model(model="G", when=when, step=step, ckpt_dir=self.RUN.ckpt_dir, states=g_states)
+        # misc.save_model(model="D", when=when, step=step, ckpt_dir=self.RUN.ckpt_dir, states=d_states)
+        # if self.Gen_ema is not None:
+        #     misc.save_model(model="G_ema", when=when, step=step, ckpt_dir=self.RUN.ckpt_dir, states=g_ema_states)
+
+        # if when == "best":
+        #     misc.save_model(model="G", when="current", step=step, ckpt_dir=self.RUN.ckpt_dir, states=g_states)
+        #     misc.save_model(model="D", when="current", step=step, ckpt_dir=self.RUN.ckpt_dir, states=d_states)
+        #     if self.Gen_ema is not None:
+        #         misc.save_model(model="G_ema",
+        #                         when="current",
+        #                         step=step,
+        #                         ckpt_dir=self.RUN.ckpt_dir,
+        #                         states=g_ema_states)
+
+        # if self.global_rank == 0 and self.logger:
+        #     self.logger.info("Save model to {}".format(self.RUN.ckpt_dir))
+        
+        #change
+        from os import makedirs
+        checkpoint = join(self.RUN.save_dir + "/checkpoints/{run_name}".format(run_name = self.run_name))
+        makedirs(checkpoint, exist_ok=True)
+
+        misc.save_model(model="G", when=when, step=step, ckpt_dir=checkpoint, states=g_states)
+        misc.save_model(model="D", when=when, step=step, ckpt_dir=checkpoint, states=d_states)
         if self.Gen_ema is not None:
-            misc.save_model(model="G_ema", when=when, step=step, ckpt_dir=self.RUN.ckpt_dir, states=g_ema_states)
+            misc.save_model(model="G_ema", when=when, step=step, ckpt_dir=checkpoint, states=g_ema_states)
 
         if when == "best":
-            misc.save_model(model="G", when="current", step=step, ckpt_dir=self.RUN.ckpt_dir, states=g_states)
-            misc.save_model(model="D", when="current", step=step, ckpt_dir=self.RUN.ckpt_dir, states=d_states)
+            misc.save_model(model="G", when="current", step=step, ckpt_dir=checkpoint, states=g_states)
+            misc.save_model(model="D", when="current", step=step, ckpt_dir=checkpoint, states=d_states)
             if self.Gen_ema is not None:
                 misc.save_model(model="G_ema",
                                 when="current",
                                 step=step,
-                                ckpt_dir=self.RUN.ckpt_dir,
+                                ckpt_dir=checkpoint,
                                 states=g_ema_states)
 
         if self.global_rank == 0 and self.logger:
-            self.logger.info("Save model to {}".format(self.RUN.ckpt_dir))
+            self.logger.info("Save model to {}".format(checkpoint))
 
         misc.make_GAN_trainable(self.Gen, self.Gen_ema, self.Dis)
 
@@ -1285,7 +1446,7 @@ class WORKER(object):
             self.logger.info("Start TSNE analysis using randomly sampled 10 classes.")
             self.logger.info("Use {ref} dataset and the same amount of generated images for visualization.".format(
                 ref=self.RUN.ref_dataset))
-        if self.gen_ctlr.standing_statistics:
+        if self.gen_ctlr.standing_statistics: 
             self.gen_ctlr.std_stat_counter += 1
 
         requires_grad = self.LOSS.apply_lo or self.RUN.langevin_sampling
@@ -1386,12 +1547,19 @@ class WORKER(object):
             self.gen_ctlr.std_stat_counter += 1
 
         fids = []
+        fids_forget = []
         requires_grad = self.LOSS.apply_lo or self.RUN.langevin_sampling
         with torch.no_grad() if not requires_grad else misc.dummy_context_mgr() as ctx:
             misc.make_GAN_untrainable(self.Gen, self.Gen_ema, self.Dis)
             generator, generator_mapping, generator_synthesis = self.gen_ctlr.prepare_generator()
 
-            for c in tqdm(range(self.DATA.num_classes)):
+            # for c in tqdm(range(self.DATA.num_classes-len(self.RUN.target_classes))):
+            # for c in tqdm(range(self.RUN.fig1_classes-len(self.RUN.target_classes))):
+
+
+            for c in tqdm((self.RUN.target_classes)):
+                print("=====================c===================")
+                print(c)
                 num_samples, target_sampler = sample.make_target_cls_sampler(dataset, c)
                 batch_size = self.OPTIMIZATION.batch_size if num_samples >= self.OPTIMIZATION.batch_size else num_samples
                 dataloader = torch.utils.data.DataLoader(dataset,
@@ -1401,6 +1569,18 @@ class WORKER(object):
                                                          num_workers=self.RUN.num_workers,
                                                          pin_memory=True,
                                                          drop_last=False)
+                
+
+                # from torchvision.utils import save_image
+
+                # for data in dataloader:
+                #     img, _ = data
+                #     path = "./results/final"
+                #     for i in range(20):
+                #         save_path = join(path, "test_real_{i}.png".format(i=i))
+                #         test = img[i]
+                #         save_image(((test + 1)/2).clamp(0.0, 1.0), save_path, padding=0)
+                #     pass
 
                 mu, sigma = fid.calculate_moments(data_loader=dataloader,
                                                   eval_model=self.eval_model,
@@ -1434,19 +1614,19 @@ class WORKER(object):
                                                     DDP=self.DDP,
                                                     device=self.local_rank,
                                                     logger=self.logger,
+                                                        disable_tqdm=True)
+                    
+                ifid_score, _, _ = fid.calculate_fid(data_loader="N/A",
+                                                    eval_model=self.eval_model,
+                                                    num_generate=num_samples,
+                                                    cfgs=self.cfgs,
+                                                    pre_cal_mean=mu,
+                                                    pre_cal_std=sigma,
+                                                    quantize=False,
+                                                    fake_feats=c_fake_feats,
                                                     disable_tqdm=True)
 
-                ifid_score, _, _ = fid.calculate_fid(data_loader="N/A",
-                                                     eval_model=self.eval_model,
-                                                     num_generate=num_samples,
-                                                     cfgs=self.cfgs,
-                                                     pre_cal_mean=mu,
-                                                     pre_cal_std=sigma,
-                                                     quantize=False,
-                                                     fake_feats=c_fake_feats,
-                                                     disable_tqdm=True)
-
-                fids.append(ifid_score)
+                fids_forget.append(ifid_score)
 
                 # save iFID values in .npz format
                 metric_dict = {"iFID": ifid_score}
@@ -1458,9 +1638,164 @@ class WORKER(object):
                 misc.save_dict_npy(directory=join(self.RUN.save_dir, "statistics", self.run_name),
                                    name="iFID",
                                    dictionary=save_dict)
+                
 
+            #change
+            index = 0
+
+            for c in tqdm((self.RUN.remain_classes)):
+                num_samples, target_sampler = sample.make_target_cls_sampler(dataset, c)
+                batch_size = self.OPTIMIZATION.batch_size if num_samples >= self.OPTIMIZATION.batch_size else num_samples
+                dataloader = torch.utils.data.DataLoader(dataset,
+                                                         batch_size=batch_size,
+                                                         shuffle=False,
+                                                         sampler=target_sampler,
+                                                         num_workers=self.RUN.num_workers,
+                                                         pin_memory=True,
+                                                         drop_last=False)
+
+                mu, sigma = fid.calculate_moments(data_loader=dataloader,
+                                                  eval_model=self.eval_model,
+                                                  num_generate="N/A",
+                                                  batch_size=batch_size,
+                                                  quantize=True,
+                                                  world_size=self.OPTIMIZATION.world_size,
+                                                  DDP=self.DDP,
+                                                  disable_tqdm=True,
+                                                  fake_feats=None)
+
+                if index < len(self.RUN.target_classes) and self.continual == True:
+                    c_fake_feats, _,_ = features.generate_images_and_stack_features(
+                                                        generator=generator,
+                                                        discriminator=self.Dis,
+                                                        eval_model=self.eval_model,
+                                                        num_generate=num_samples,
+                                                        y_sampler=c+self.RUN.target_classes[index],
+                                                        batch_size=self.OPTIMIZATION.batch_size,
+                                                        z_prior=self.MODEL.z_prior,
+                                                        truncation_factor=self.RUN.truncation_factor,
+                                                        z_dim=self.MODEL.z_dim,
+                                                        num_classes=self.DATA.num_classes,
+                                                        LOSS=self.LOSS,
+                                                        RUN=self.RUN,
+                                                        MODEL=self.MODEL,
+                                                        is_stylegan=self.is_stylegan,
+                                                        generator_mapping=generator_mapping,
+                                                        generator_synthesis=generator_synthesis,
+                                                        quantize=True,
+                                                        world_size=self.OPTIMIZATION.world_size,
+                                                        DDP=self.DDP,
+                                                        device=self.local_rank,
+                                                        logger=self.logger,
+                                                        disable_tqdm=True)
+                else: 
+                    c_fake_feats, _,_ = features.generate_images_and_stack_features(
+                                                        generator=generator,
+                                                        discriminator=self.Dis,
+                                                        eval_model=self.eval_model,
+                                                        num_generate=num_samples,
+                                                        y_sampler=c,
+                                                        batch_size=self.OPTIMIZATION.batch_size,
+                                                        z_prior=self.MODEL.z_prior,
+                                                        truncation_factor=self.RUN.truncation_factor,
+                                                        z_dim=self.MODEL.z_dim,
+                                                        num_classes=self.DATA.num_classes,
+                                                        LOSS=self.LOSS,
+                                                        RUN=self.RUN,
+                                                        MODEL=self.MODEL,
+                                                        is_stylegan=self.is_stylegan,
+                                                        generator_mapping=generator_mapping,
+                                                        generator_synthesis=generator_synthesis,
+                                                        quantize=True,
+                                                        world_size=self.OPTIMIZATION.world_size,
+                                                        DDP=self.DDP,
+                                                        device=self.local_rank,
+                                                        logger=self.logger,
+                                                        disable_tqdm=True)
+                    
+                ifid_score, _, _ = fid.calculate_fid(data_loader="N/A",
+                                                    eval_model=self.eval_model,
+                                                    num_generate=num_samples,
+                                                    cfgs=self.cfgs,
+                                                    pre_cal_mean=mu,
+                                                    pre_cal_std=sigma,
+                                                    quantize=False,
+                                                    fake_feats=c_fake_feats,
+                                                    disable_tqdm=True)
+
+                fids.append(ifid_score)
+
+
+                # save iFID values in .npz format
+                metric_dict = {"iFID": ifid_score}
+
+                save_dict = misc.accm_values_convert_dict(list_dict={"iFID": []},
+                                                          value_dict=metric_dict,
+                                                          step=c,
+                                                          interval=1)
+                misc.save_dict_npy(directory=join(self.RUN.save_dir, "statistics", self.run_name),
+                                   name="iFID",
+                                   dictionary=save_dict)
+                
+                index +=1
+
+
+        #change
         if self.global_rank == 0 and self.logger:
-            self.logger.info("Average iFID score: {iFID}".format(iFID=sum(fids, 0.0) / len(fids)))
+            print("==================fids check================")
+            print("fids", fids)
+            print("target_classes_forget_ifid", fids_forget)
+            print("target_classes_new_ifid", fids[:len(self.RUN.target_classes)])
+            print("remain_classes_ifid", fids[len(self.RUN.target_classes):])
+
+            average_ifid = sum(fids, 0.0) / len(fids)
+            if len(self.RUN.target_classes) ==0: 
+                average_target_classes_new_ifid = 0
+                average_target_classes_forget_ifid = 0
+            else:
+                average_target_classes_new_ifid = sum(fids[:len(self.RUN.target_classes)], 0.0) / len(self.RUN.target_classes)
+                average_target_classes_forget_ifid = sum(fids_forget, 0.0) / len(self.RUN.target_classes)
+
+
+            if (len(self.RUN.remain_classes) <= len(self.RUN.target_classes)):
+                average_remain_classes_ifid = 0
+            else:
+                average_remain_classes_ifid = sum(fids[len(self.RUN.target_classes):], 0.0) / (len(self.RUN.remain_classes) - len(self.RUN.target_classes))
+
+            self.logger.info("Average iFID score: {iFID}".format(iFID=average_ifid))
+            self.logger.info("Average target_classes_forget iFID score: {iFID}".format(iFID=average_target_classes_forget_ifid))
+            self.logger.info("Average target_classes_new iFID score: {iFID}".format(iFID=average_target_classes_new_ifid))
+            self.logger.info("Average remain_classes iFID score: {iFID}".format(iFID=average_remain_classes_ifid))
+            
+            wandb.log({"Average iFID score": average_ifid}, step=self.wandb_step)
+            wandb.log({"Average target_forget_classes iFID score": average_target_classes_forget_ifid}, step=self.wandb_step)
+            wandb.log({"Average target_new_classes iFID score": average_target_classes_new_ifid}, step=self.wandb_step)
+            wandb.log({"Average remain_classes iFID score": average_remain_classes_ifid}, step=self.wandb_step)
+
+            self.metric_target_forget_ifid["target_forget_ifid"].append(average_target_classes_forget_ifid)
+            self.metric_target_new_ifid["target_new_ifid"].append(average_target_classes_new_ifid)
+            self.metric_remain_ifid["remain_ifid"].append(average_remain_classes_ifid)
+
+
+            misc.save_dict_npy(directory=join(self.RUN.save_dir, "statistics", self.run_name),
+                                name="iFID_target_forget",
+                                dictionary=self.metric_target_forget_ifid)
+
+            misc.save_dict_npy(directory=join(self.RUN.save_dir, "statistics", self.run_name),
+                                name="iFID_target_new",
+                                dictionary=self.metric_target_new_ifid)
+            
+            misc.save_dict_npy(directory=join(self.RUN.save_dir, "statistics", self.run_name),
+                    name="iFID_remain",
+                    dictionary=self.metric_remain_ifid)
+            
+            print(self.metric_target_forget_ifid)
+            print(self.metric_target_new_ifid)
+            print(self.metric_remain_ifid)
+
+        # self.metric_target_new_ifid = {"target_new_ifid": []}
+        # self.metric_target_forget_ifid = {"remain_ifid": []}
+        # self.metric_remain_ifid = {"remain_ifid": []}
 
         misc.make_GAN_trainable(self.Gen, self.Gen_ema, self.Dis)
 

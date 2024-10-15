@@ -1,0 +1,31 @@
+DATA:
+  name: "FashionMNIST"
+  img_size: 28
+  num_classes: 10
+  img_channels: 1
+MODEL:
+  backbone: "deep_conv_MNIST"
+  g_cond_mtd: "cBN"
+  # g_info_injection: "concat"
+  # d_cond_mtd: "W/O"
+  d_cond_mtd: "AC"
+  aux_cls_type: "W/O"
+  g_conv_dim: "N/A"
+  d_conv_dim: "N/A"
+  apply_d_sn: True
+LOSS:
+  adv_loss: "vanilla"
+  cond_lambda: 1.0
+OPTIMIZATION:
+  batch_size: 64
+  d_updates_per_step: 2
+  total_steps: 20000
+  # d_lr:  0.00002
+  g_lr:  0.00001
+PRE:
+  apply_rflip: False
+DYNAMIC:
+  occupy_start: -1
+  occupy_end: -1
+  randomly_select: False
+  keepd: -1

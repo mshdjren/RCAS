@@ -1,0 +1,50 @@
+# "original STUDIOGAN"
+# DATA:
+#   name: "CIFAR10"
+#   img_size: 32
+#   num_classes: 10
+# MODEL:
+#   backbone: "deep_conv"
+#   g_cond_mtd: "N/A"
+#   d_cond_mtd: "N/A"
+# OPTIMIZATION:
+#   d_updates_per_steps: 2
+#   total_steps: 200000
+
+DATA:
+  name: "CIFAR10"
+  img_size: 32
+  num_classes: 10
+MODEL:
+  backbone: "deep_conv"
+  # backbone: "dynamic_deep_conv"
+  g_cond_mtd: "cBN"
+  # d_cond_mtd: "W/O"
+  d_cond_mtd: "AC"
+  aux_cls_type: "W/O"
+  g_conv_dim: "N/A"
+  d_conv_dim: "N/A"
+  # g_init: "ortho"
+  apply_d_sn: True
+LOSS:
+  adv_loss: "vanilla"
+  cond_lambda: 1.0
+  # adv_loss: "wasserstein"
+  # apply_gp: True
+  # gp_lambda: 10.0
+  # reg_lambda: 0.1
+  # apply_topk: False
+  # topk_gamma: 0.1
+  # topk_nu: 0.1
+OPTIMIZATION:
+  batch_size: 64
+  d_updates_per_step: 2
+  total_steps: 50000
+  g_lr:  0.0001
+PRE:
+  apply_rflip: False
+DYNAMIC:
+  occupy_start: -1.0
+  occupy_end: -1.0
+  randomly_select: False
+  keepd: -1

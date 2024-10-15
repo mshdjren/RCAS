@@ -75,7 +75,7 @@ def load_ckpt(model, optimizer, ckpt_path, load_model=False, load_opt=False, loa
 
 
 def load_StudioGAN_ckpts(ckpt_dir, load_best, Gen, Dis, g_optimizer, d_optimizer, run_name, apply_g_ema, Gen_ema, ema,
-                         is_train, RUN, logger, global_rank, device, cfg_file):
+                         is_train, RUN, logger, global_rank, device, cfg_file, reset_run_name):
     when = "best" if load_best is True else "current"
     x = join(ckpt_dir, "model=G-{when}-weights-step=".format(when=when))
     Gen_ckpt_path = glob.glob(glob.escape(x) + '*.pth')[0]
@@ -120,13 +120,26 @@ def load_StudioGAN_ckpts(ckpt_dir, load_best, Gen, Dis, g_optimizer, d_optimizer
         misc.fix_seed(RUN.seed)
 
     if device == 0:
+
+        #change
+        # if not is_freezeD:
+        #     logger = log.make_logger(RUN.save_dir, prev_run_name, None)
+
+        # logger.info("Generator checkpoint is {}".format(Gen_ckpt_path))
+        # if apply_g_ema:
+        #     logger.info("EMA_Generator checkpoint is {}".format(Gen_ema_ckpt_path))
+        # logger.info("Discriminator checkpoint is {}".format(Dis_ckpt_path))
+
         if not is_freezeD:
-            logger = log.make_logger(RUN.save_dir, prev_run_name, None)
+            logger = log.make_logger(RUN.save_dir, reset_run_name, None)
 
         logger.info("Generator checkpoint is {}".format(Gen_ckpt_path))
         if apply_g_ema:
             logger.info("EMA_Generator checkpoint is {}".format(Gen_ema_ckpt_path))
         logger.info("Discriminator checkpoint is {}".format(Dis_ckpt_path))
+
+        prev_run_name = reset_run_name
+
 
     if is_freezeD:
         prev_run_name, step, epoch, topk, aa_p, best_step, best_fid, best_ckpt_path =\

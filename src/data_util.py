@@ -8,7 +8,7 @@ import os
 import random
 
 from torch.utils.data import Dataset
-from torchvision.datasets import CIFAR10, CIFAR100
+from torchvision.datasets import MNIST,FashionMNIST,CIFAR10, CIFAR100
 from torchvision.datasets import ImageFolder
 from torchvision.transforms import InterpolationMode
 from scipy import io
@@ -67,7 +67,8 @@ class Dataset_(Dataset):
                  random_flip=False,
                  normalize=True,
                  hdf5_path=None,
-                 load_data_in_memory=False):
+                 load_data_in_memory=False,
+                 continual = False):
         super(Dataset_, self).__init__()
         self.data_name = data_name
         self.data_dir = data_dir
@@ -77,6 +78,7 @@ class Dataset_(Dataset):
         self.hdf5_path = hdf5_path
         self.load_data_in_memory = load_data_in_memory
         self.trsf_list = []
+        self.continual = continual
 
         if self.hdf5_path is None:
             if crop_long_edge:
@@ -91,7 +93,10 @@ class Dataset_(Dataset):
 
         if self.normalize:
             self.trsf_list += [transforms.ToTensor()]
-            self.trsf_list += [transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])]
+            if self.data_name == "MNIST" or self.data_name == "FashionMNIST":
+                self.trsf_list += [transforms.Normalize([0.5], [0.5])]
+            else:
+                self.trsf_list += [transforms.Normalize([0.5, 0.5, 0.5], [0.5, 0.5, 0.5])]
         else:
             self.trsf_list += [transforms.PILToTensor()]
 
@@ -109,16 +114,40 @@ class Dataset_(Dataset):
                     self.data = data[:]
                     self.labels = labels[:]
             return
+        
+        if self.continual == False:
+            if self.train == True:
 
-        if self.data_name == "CIFAR10":
-            self.data = CIFAR10(root=self.data_dir, train=self.train, download=True)
+                print("=================data import from {}=================".format(self.data_dir))
+                    
+                if self.data_name == "CIFAR10":
+                    self.data = CIFAR10(root=self.data_dir, train=self.train, download=True)
 
-        elif self.data_name == "CIFAR100":
-            self.data = CIFAR100(root=self.data_dir, train=self.train, download=True)
-        else:
-            mode = "train" if self.train == True else "valid"
-            root = os.path.join(self.data_dir, mode)
+                elif self.data_name == "CIFAR100":
+                    self.data = CIFAR100(root=self.data_dir, train=self.train, download=True)
+                elif self.data_name == "MNIST":
+                    self.data = MNIST(root=self.data_dir, train=self.train, download=True)
+                elif self.data_name == "FashionMNIST":
+                    self.data = FashionMNIST(root=self.data_dir, train=self.train, download=True)
+                else:
+                    # change
+                    # mode = "train" if self.train == True else "valid"
+                    # mode = "train" if self.train == True else "valid"
+                    # root = os.path.join(self.data_dir, mode)
+                    # self.data = ImageFolder(root=root)
+                    pass
+            else:
+                pass
+
+        else :
+            root = self.train
+            print("=================data import from {}=================".format(root))
+
             self.data = ImageFolder(root=root)
+            if self.data_name == "MNIST" or self.data_name == "FashionMNIST":
+                self.trsf_list +=[transforms.Grayscale(num_output_channels=1)]
+
+
 
     def _get_hdf5(self, index):
         with h5.File(self.hdf5_path, "r") as f:

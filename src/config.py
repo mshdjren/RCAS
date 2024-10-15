@@ -331,6 +331,15 @@ class Configurations(object):
         self.STYLEGAN.blur_init_sigma = "N/A"
 
         # -----------------------------------------------------------------------------
+        # Dynamic settings
+        # -----------------------------------------------------------------------------
+        self.DYNAMIC = misc.make_empty_object()
+
+        self.DYNAMIC.occupy_start = -1.0
+        self.DYNAMIC.occupy_end = -1.0
+        self.DYNAMIC.randomly_select = True
+        self.DYNAMIC.keepd = -1
+        # -----------------------------------------------------------------------------
         # run settings
         # -----------------------------------------------------------------------------
         self.RUN = misc.make_empty_object()
@@ -340,7 +349,7 @@ class Configurations(object):
         # -----------------------------------------------------------------------------
         self.MISC = misc.make_empty_object()
 
-        self.MISC.no_proc_data = ["CIFAR10", "CIFAR100", "Tiny_ImageNet"]
+        self.MISC.no_proc_data = ["MNIST", "FashoinMNIST", "CIFAR10", "CIFAR100", "Tiny_ImageNet"]
         self.MISC.base_folders = ["checkpoints", "figures", "logs", "moments", "samples", "values"]
         self.MISC.classifier_based_GAN = ["AC", "2C", "D2DCE"]
         self.MISC.info_params = ["info_discrete_linear", "info_conti_mu_linear", "info_conti_var_linear"]
@@ -390,7 +399,8 @@ class Configurations(object):
             "PRE": self.PRE,
             "AUG": self.AUG,
             "RUN": self.RUN,
-            "STYLEGAN": self.STYLEGAN
+            "STYLEGAN": self.STYLEGAN,
+            "DYNAMIC": self.DYNAMIC
         }
 
     def update_cfgs(self, cfgs, super="RUN"):
@@ -423,14 +433,31 @@ class Configurations(object):
 
             d_losses = {
                 "vanilla": losses.d_vanilla,
+                "real_vanilla": losses.d_vanilla_real,
+                "fake_vanilla": losses.d_vanilla_fake,
                 "logistic": losses.d_logistic,
                 "least_square": losses.d_ls,
                 "hinge": losses.d_hinge,
+                "real_hinge": losses.d_hinge_real,
+                "fake_hinge": losses.d_hinge_fake,
                 "wasserstein": losses.d_wasserstein,
+                "real_wasserstein": losses.d_wasserstein_real,
+                "fake_wasserstein": losses.d_wasserstein_fake,
             }
 
             self.LOSS.g_loss = g_losses[self.LOSS.adv_loss]
             self.LOSS.d_loss = d_losses[self.LOSS.adv_loss]
+        
+            if self.RUN.loss_check == True:
+                if self.LOSS.adv_loss == "vanilla":
+                    self.LOSS.d_loss_real = d_losses["real_vanilla"]
+                    self.LOSS.d_loss_fake = d_losses["fake_vanilla"]
+                elif self.LOSS.adv_loss == "wasserstein":
+                    self.LOSS.d_loss_real = d_losses["real_wasserstein"]
+                    self.LOSS.d_loss_fake = d_losses["fake_wasserstein"]
+                elif self.LOSS.adv_loss == "hinge":
+                    self.LOSS.d_loss_real = d_losses["real_hinge"]
+                    self.LOSS.d_loss_fake = d_losses["fake_hinge"]
 
     def define_modules(self):
         if self.MODEL.apply_g_sn:
@@ -721,8 +748,8 @@ class Configurations(object):
         if self.OPTIMIZATION.world_size > 1 and self.RUN.synchronized_bn:
             assert not self.RUN.batch_statistics, "batch_statistics cannot be used with synchronized_bn."
 
-        if self.DATA.name in ["CIFAR10", "CIFAR100"]:
-            assert self.RUN.ref_dataset in ["train", "test"], "There is no data for validation."
+        # if self.DATA.name in ["CIFAR10", "CIFAR100"]:
+        #     assert self.RUN.ref_dataset in ["train", "test"], "There is no data for validation."
 
         if self.RUN.interpolation:
             assert self.MODEL.backbone in ["big_resnet", "big_resnet_deep_legacy", "big_resnet_deep_studiogan"], \

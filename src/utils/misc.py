@@ -16,7 +16,7 @@ import json
 import warnings
 
 from torch.nn import DataParallel
-from torchvision.datasets import CIFAR10, CIFAR100
+from torchvision.datasets import MNIST, FashionMNIST, CIFAR10, CIFAR100
 from torch.nn.parallel import DistributedDataParallel
 from torchvision.utils import save_image
 from itertools import chain
@@ -147,8 +147,12 @@ def prepare_folder(names, save_dir):
         if not exists(folder_path):
             os.makedirs(folder_path)
 
-
+#change
 def download_data_if_possible(data_name, data_dir):
+    if data_name == "MNIST":
+        data = MNIST(root=data_dir, train=True, download=True)
+    elif data_name == "FashionMNIST":
+        data = FashionMNIST(root=data_dir, train=True, download=True)
     if data_name == "CIFAR10":
         data = CIFAR10(root=data_dir, train=True, download=True)
     elif data_name == "CIFAR100":
@@ -334,7 +338,8 @@ def apply_standing_statistics(generator, standing_max_batch, standing_step, DATA
 
 def define_sampler(dataset_name, dis_cond_mtd, batch_size, num_classes):
     if dis_cond_mtd != "W/O":
-        if dataset_name == "CIFAR10" or batch_size >= num_classes*8:
+        #change
+        if dataset_name == "MNIST" or dataset_name == "FashionMNIST" or dataset_name == "CIFAR10" or batch_size >= num_classes*8:
             sampler = "acending_all"
         else:
             sampler = "acending_some"
@@ -391,11 +396,20 @@ def peel_model(model):
     return model
 
 
+# def save_model(model, when, step, ckpt_dir, states):
+#     model_tpl = "model={model}-{when}-weights-step={step}.pth"
+#     model_ckpt_list = glob.glob(join(ckpt_dir, model_tpl.format(model=model, when=when, step="*")))
+#     if len(model_ckpt_list) > 0:
+#         find_and_remove(model_ckpt_list[0])
+
+#     torch.save(states, join(ckpt_dir, model_tpl.format(model=model, when=when, step=step)))
+
+#change
 def save_model(model, when, step, ckpt_dir, states):
     model_tpl = "model={model}-{when}-weights-step={step}.pth"
-    model_ckpt_list = glob.glob(join(ckpt_dir, model_tpl.format(model=model, when=when, step="*")))
-    if len(model_ckpt_list) > 0:
-        find_and_remove(model_ckpt_list[0])
+    # model_ckpt_list = glob.glob(join(ckpt_dir, model_tpl.format(model=model, when=when, step="*")))
+    # if len(model_ckpt_list) > 0:
+    #     find_and_remove(model_ckpt_list[0])
 
     torch.save(states, join(ckpt_dir, model_tpl.format(model=model, when=when, step=step)))
 
@@ -554,21 +568,40 @@ def interpolate(x0, x1, num_midpoints):
     lerp = torch.linspace(0, 1.0, num_midpoints + 2, device="cuda").to(x0.dtype)
     return ((x0 * (1 - lerp.view(1, -1, 1))) + (x1 * lerp.view(1, -1, 1)))
 
+#change
+# def accm_values_convert_dict(list_dict, value_dict, step, interval):
+#     for name, value_list in list_dict.items():
+#         if step is None:
+#             value_list += [value_dict[name]]
+#         else:
+#             try:
+#                 value_list[step // interval - 1] = value_dict[name]
+#             except IndexError:
+#                 try:
+#                     value_list += [value_dict[name]]
+#                 except:
+#                     raise KeyError
+#         list_dict[name] = value_list
+#     return list_dict
+
 
 def accm_values_convert_dict(list_dict, value_dict, step, interval):
     for name, value_list in list_dict.items():
-        if step is None:
-            value_list += [value_dict[name]]
-        else:
-            try:
-                value_list[step // interval - 1] = value_dict[name]
-            except IndexError:
-                try:
-                    value_list += [value_dict[name]]
-                except:
-                    raise KeyError
+        value_list.append(value_dict[name])
         list_dict[name] = value_list
+        # if step is None:
+        #     value_list += [value_dict[name]]
+        # else:
+        #     try:
+        #         value_list[step // interval - 1] = value_dict[name]
+        #     except IndexError:
+        #         try:
+        #             value_list += [value_dict[name]]
+        #         except:
+        #             raise KeyError
+        # list_dict[name] = value_list
     return list_dict
+
 
 
 def save_dict_npy(directory, name, dictionary):

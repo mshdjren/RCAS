@@ -16,7 +16,7 @@ from utils.ema import EmaStylegan2
 import utils.misc as misc
 
 
-def load_generator_discriminator(DATA, OPTIMIZATION, MODEL, STYLEGAN, MODULES, RUN, device, logger):
+def load_generator_discriminator(DATA, OPTIMIZATION, MODEL, STYLEGAN, MODULES, RUN, DYNAMIC, device, logger):
     if device == 0:
         logger.info("Build a Generative Adversarial Network.")
     module = __import__("models.{backbone}".format(backbone=MODEL.backbone), fromlist=["something"])
@@ -96,6 +96,55 @@ def load_generator_discriminator(DATA, OPTIMIZATION, MODEL, STYLEGAN, MODULES, R
                                ema_kimg=STYLEGAN.g_ema_kimg,
                                ema_rampup=STYLEGAN.g_ema_rampup,
                                effective_batch_size=OPTIMIZATION.batch_size * OPTIMIZATION.acml_steps)
+        else:
+            Gen_ema, Gen_ema_mapping, Gen_ema_synthesis, ema = None, None, None, None
+
+
+    elif DYNAMIC.occupy_start > 0 and DYNAMIC.occupy_end > 0:
+        Gen = module.Generator(z_dim=MODEL.z_dim,
+                               g_shared_dim=MODEL.g_shared_dim,
+                               img_size=DATA.img_size,
+                               g_conv_dim=MODEL.g_conv_dim,
+                               apply_attn=MODEL.apply_attn,
+                               attn_g_loc=MODEL.attn_g_loc,
+                               g_cond_mtd=MODEL.g_cond_mtd,
+                               num_classes=DATA.num_classes,
+                               g_init=MODEL.g_init,
+                               g_depth=MODEL.g_depth,
+                               mixed_precision=RUN.mixed_precision,
+                               MODULES=MODULES,
+                               MODEL=MODEL).to(device)
+
+
+        Gen_mapping, Gen_synthesis = None, None
+
+        Dis = module.Discriminator(img_size=DATA.img_size,
+                                   d_conv_dim=MODEL.d_conv_dim,
+                                   apply_d_sn=MODEL.apply_d_sn,
+                                   apply_attn=MODEL.apply_attn,
+                                   attn_d_loc=MODEL.attn_d_loc,
+                                   d_cond_mtd=MODEL.d_cond_mtd,
+                                   aux_cls_type=MODEL.aux_cls_type,
+                                   d_embed_dim=MODEL.d_embed_dim,
+                                   num_classes=DATA.num_classes,
+                                   normalize_d_embed=MODEL.normalize_d_embed,
+                                   d_init=MODEL.d_init,
+                                   d_depth=MODEL.d_depth,
+                                   mixed_precision=RUN.mixed_precision,
+                                   MODULES=MODULES,
+                                   MODEL=MODEL,
+                                   dynamic_kwargs={"occupy_ratio": DYNAMIC.occupy_start, "randomly_select": DYNAMIC.randomly_select},
+                                    keepd = DYNAMIC.keepd).to(device)
+            # synthesis_kwargs={"channel_base": g_channel_base, "channel_max": g_channel_max, \
+
+        if MODEL.apply_g_ema:
+            if device == 0:
+                logger.info("Prepare exponential moving average generator with decay rate of {decay}."\
+                            .format(decay=MODEL.g_ema_decay))
+            Gen_ema = copy.deepcopy(Gen)
+            Gen_ema_mapping, Gen_ema_synthesis = None, None
+
+            ema = Ema(source=Gen, target=Gen_ema, decay=MODEL.g_ema_decay, start_iter=MODEL.g_ema_start)
         else:
             Gen_ema, Gen_ema_mapping, Gen_ema_synthesis, ema = None, None, None, None
 

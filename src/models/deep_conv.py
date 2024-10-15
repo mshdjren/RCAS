@@ -125,18 +125,21 @@ class Generator(nn.Module):
             out = self.tanh(act)
         return out
 
-
+#change
 class DiscBlock(nn.Module):
     def __init__(self, in_channels, out_channels, apply_d_sn, MODULES):
+    
         super(DiscBlock, self).__init__()
         self.apply_d_sn = apply_d_sn
 
-        self.conv0 = MODULES.d_conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=3, stride=1, padding=1)
-        self.conv1 = MODULES.d_conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=4, stride=2, padding=1)
+        # change
+        # self.conv0 = MODULES.d_conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=3, stride=1, padding=1)
+        # self.conv1 = MODULES.d_conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=4, stride=2, padding=1)
+        self.conv0 = MODULES.d_conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=4, stride=2, padding=1)
 
         if not apply_d_sn:
             self.bn0 = MODULES.d_bn(in_features=out_channels)
-            self.bn1 = MODULES.d_bn(in_features=out_channels)
+            # self.bn1 = MODULES.d_bn(in_features=out_channels)
 
         self.activation = MODULES.d_act_fn
 
@@ -144,12 +147,12 @@ class DiscBlock(nn.Module):
         x = self.conv0(x)
         if not self.apply_d_sn:
             x = self.bn0(x)
-        x = self.activation(x)
-
-        x = self.conv1(x)
-        if not self.apply_d_sn:
-            x = self.bn1(x)
         out = self.activation(x)
+
+        # x = self.conv1(x)
+        # if not self.apply_d_sn:
+        #     x = self.bn1(x)
+        # out = self.activation(x)
         return out
 
 

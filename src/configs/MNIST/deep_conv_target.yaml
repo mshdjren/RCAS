@@ -1,0 +1,28 @@
+DATA:
+  name: "MNIST"
+  img_size: 28
+  num_classes: 10
+  img_channels: 1
+MODEL:
+  backbone: "deep_conv_MNIST"
+  g_cond_mtd: "cBN"
+  d_cond_mtd: "PD"
+  aux_cls_type: "W/O"
+  g_conv_dim: "N/A"
+  d_conv_dim: "N/A"
+  # g_init: "ortho"
+  # apply_g_sn: True
+  apply_d_sn: True
+LOSS:
+  adv_loss: "vanilla"
+OPTIMIZATION:
+  batch_size: 64
+  d_updates_per_step: 2
+  total_steps: 200000
+PRE:
+  apply_rflip: False
+DYNAMIC:
+  occupy_start: -1.0
+  occupy_end: -1.0
+  randomly_select: False
+  keepd: -1

@@ -24,13 +24,39 @@ import utils.misc as misc
 
 RUN_NAME_FORMAT = ("{data_name}-" "{framework}-" "{phase}-" "{timestamp}")
 
+import torch.nn as nn
+
+
+# class MyModel(nn.Module):
+#     def __init__(self):
+#         super(MyModel, self).__init__()
+#         self.modlist = nn.ModuleList()
+#         for _ in range(5):
+#             self.modlist.append(nn.Linear(10, 10))
+            
+#     def forward(self, x):
+#         for m in self.modlist:
+#             x = m(x)
+#         return x
+
+# model = MyModel()
+# x = torch.randn(1, 10)
+# out = model(x)
+
+# a = [m.register_forward_hook(lambda m, input, output: print(output.shape)) for m in model.modlist]
+
+# out = model(x)
+
+# print(a)
+
+
 
 def load_configs_initialize_training():
     parser = ArgumentParser(add_help=True)
-    parser.add_argument("--entity", type=str, default=None, help="entity for wandb logging")
-    parser.add_argument("--project", type=str, default=None, help="project name for wandb logging")
+    parser.add_argument("--entity", type=str, default='mshdjren', help="entity for wandb logging")
+    parser.add_argument("--project", type=str, default='Figure1_DCGAN_cBN_PD', help="project name for wandb logging")
 
-    parser.add_argument("-cfg", "--cfg_file", type=str, default="./src/configs/CIFAR10/ContraGAN.yaml")
+    parser.add_argument("-cfg", "--cfg_file", type=str, default="./src/configs/MNIST/deep_conv.yaml")
     parser.add_argument("-data", "--data_dir", type=str, default=None)
     parser.add_argument("-save", "--save_dir", type=str, default="./")
     parser.add_argument("-ckpt", "--ckpt_dir", type=str, default=None)
@@ -75,8 +101,11 @@ def load_configs_initialize_training():
     parser.add_argument("-t", "--train", action="store_true")
     parser.add_argument("-hdf5", "--load_train_hdf5", action="store_true", help="load train images from a hdf5 file for fast I/O")
     parser.add_argument("-l", "--load_data_in_memory", action="store_true", help="put the whole train dataset on the main memory for fast I/O")
-    parser.add_argument("-metrics", "--eval_metrics", nargs='+', default=['fid'],
-                        help="evaluation metrics to use during training, a subset list of ['fid', 'is', 'prdc'] or none")
+    #change
+    # parser.add_argument("-metrics", "--eval_metrics", nargs='+', default=['fid'],
+    #                 help="evaluation metrics to use during training, a subset list of ['fid', 'is', 'prdc'] or none")
+    parser.add_argument("-metrics", "--eval_metrics", nargs='+', default="none",
+                    help="evaluation metrics to use during training, a subset list of ['fid', 'is', 'prdc'] or none")
     parser.add_argument("--pre_resizer", type=str, default="wo_resize", help="which resizer will you use to pre-process images\
                         in ['wo_resize', 'nearest', 'bilinear', 'bicubic', 'lanczos']")
     parser.add_argument("--post_resizer", type=str, default="legacy", help="which resizer will you use to evaluate GANs\
@@ -107,8 +136,52 @@ def load_configs_initialize_training():
                         help="[InceptionV3_tf, InceptionV3_torch, ResNet50_torch, SwAV_torch, DINO_torch, Swin-T_torch]")
     parser.add_argument("-ref", "--ref_dataset", type=str, default="train", help="reference dataset for evaluation[train/valid/test]")
     parser.add_argument("--calc_is_ref_dataset", action="store_true", help="whether to calculate a inception score of the ref dataset.")
+
+    #for unlearning
+    parser.add_argument("-freezeD", type=int, default=-1, help="# of freezed blocks in the discriminator for transfer learning")
+    parser.add_argument("-freezeD_lastconv", action="store_true", help="# of freezed blocks in the discriminator for transfer learning")
+    parser.add_argument("-freezeD_linear1", action="store_true", help="# of freezed blocks in the discriminator for transfer learning")
+
+    parser.add_argument("-loss_check", action="store_true", help="# of freezed blocks in the discriminator for transfer learning")
+
+
+    parser.add_argument("-scratch_run_type", type=str, default= "Gen_Dis_reinit")
+    parser.add_argument("-run_type", type=str, default= "Gen_Dis_reinit")
+
+
+    parser.add_argument("-disc_output", action="store_true", help="# of freezed blocks in the discriminator for transfer learning")
+
+    parser.add_argument("-graph", action="store_true", help="# of freezed blocks in the discriminator for transfer learning")
+
+    parser.add_argument("-selectG_topk_ratio", type=int, default=2, help="topkratio for mas")
+    parser.add_argument("-selectD_topk_ratio", type=int, default=2, help="topkratio for mas")
+    parser.add_argument("-selectG_blocks", nargs='+', type=int, default=[], help="# of freezed b5locks in the discriminator for transfer learning")
+    parser.add_argument("-selectG_layers", nargs='+', type=int, default=[], help="# of freezed blocks in the discriminator for transfer learning")
+    parser.add_argument("-selectD_blocks", nargs='+', type=int, default=[], help="# of freezed blocks in the discriminator for transfer learning")
+    parser.add_argument("-selectD_layers", nargs='+', type=int, default=[], help="# of freezed blocks in the discriminator for transfer learning")
+    #for disc_adversarial
+    parser.add_argument("-linear1", action="store_true", help="# of freezed blocks in the discriminator for transfer learning")
+    #for disc_classifier
+    parser.add_argument("-linear2", action="store_true", help="# of freezed blocks in the discriminator for transfer learning")
+    #for generator last channel
+    parser.add_argument("-last_conv", action="store_true", help="# of freezed blocks in the discriminator for transfer learning")
+
+    parser.add_argument("-mas", action="store_true", help="conduct mas analysis")
+    parser.add_argument("-retrain", action="store_true", help="conduct mas analysis")
+    parser.add_argument("-boundary", action="store_true", help="conduct mas analysis")
+
+
+    parser.add_argument("-target_classes", nargs='+', type=int, default=[], help="# of freezed blocks in the discriminator for transfer learning")
+    parser.add_argument("-remain_classes", nargs='+', type=int, default=[], help="# of freezed blocks in the discriminator for transfer learning")
+    parser.add_argument("-fig1_classes", type=int, default=10, help="topkratio for mas")
+
+    parser.add_argument("-split_loader", action="store_true", help="conduct mas analysis")
+    parser.add_argument("-continual", action="store_true", help="conduct mas analysis")
+
     args = parser.parse_args()
     run_cfgs = vars(args)
+
+
 
     if not args.train and \
             "none" in args.eval_metrics and \
@@ -136,7 +209,7 @@ def load_configs_initialize_training():
     run_name = log.make_run_name(RUN_NAME_FORMAT,
                                  data_name=cfgs.DATA.name,
                                  framework=cfgs.RUN.cfg_file.split("/")[-1][:-5],
-                                 phase="train")
+                                 phase=cfgs.RUN.scratch_run_type)
 
     crop_long_edge = False if cfgs.DATA.name in cfgs.MISC.no_proc_data else True
     resize_size = None if cfgs.DATA.name in cfgs.MISC.no_proc_data else cfgs.DATA.img_size
