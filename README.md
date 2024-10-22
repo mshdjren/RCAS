@@ -2,13 +2,17 @@
 Private Pytorch implementation of [CLASS-SWAP LEARNING FOR CONDITIONAL GENERATIVE ADVERSARIAL NETWORKS VIA REINITIALIZATION OF CLASS-AWARE SYNAPSES]
 
 
-<img src=https://github.com/mshdjren/RCAS/blob/master/figures/main_figure.jpg> 
-<img src=https://github.com/mshdjren/RCAS/blob/master/figures/figure_sample_ver2.jpg>
-
 ## Abstract
 In continual learning research, the primary goal is to learn new knowledge while preventing catastrophic forgetting of previously trained knowledge. However, in dynamic industrial environments, certain learned classes are no longer required and need to adapt to new classes, as in semiconductor defect detection where certain defects are resolved while new ones emerge. To address this challenge, we present classswap learning, an efficient fine-tuning method that rapidly learns the new classes by swaping the unused target classes.
 Our method especially focuses on conditional Generative Adversarial Networks (cGANs) that re-initializes important weights in generating the target classes by adapting gradientbased algorithm. In our experimental results, class-swap learning shows faster convergence rate in learning the new classes when compared to standard fine-tuning in terms of qualitative measurements.
 
+## Methods
+<img src=https://github.com/mshdjren/RCAS/blob/master/figures/main_figure.jpg> 
+
+## Results
+<img src=https://github.com/mshdjren/RCAS/blob/master/figures/figure_sample.jpg>
+
+<img src=https://github.com/mshdjren/RCAS/blob/master/figures/figure_top_ratio.jpg>
 
 ## Requirements:
 $ git clone https://github.com/eriklindernoren/PyTorch-GAN
