@@ -3,7 +3,7 @@ Private Pytorch implementation of [CLASS-SWAP LEARNING FOR CONDITIONAL GENERATIV
 
 
 <img src=https://github.com/mshdjren/RCAS/blob/master/figures/main_figure.jpg> 
-<img src=https://github.com/mshdjren/RCAS/blob/master/figures/figure_sample.jpg>
+<img src=https://github.com/mshdjren/RCAS/blob/master/figures/figure_sample_ver2.jpg>
 
 ## Abstract
 In continual learning research, the primary goal is to learn new knowledge while preventing catastrophic forgetting of previously trained knowledge. However, in dynamic industrial environments, certain learned classes are no longer required and need to adapt to new classes, as in semiconductor defect detection where certain defects are resolved while new ones emerge. To address this challenge, we present classswap learning, an efficient fine-tuning method that rapidly learns the new classes by swaping the unused target classes.
