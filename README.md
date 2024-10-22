@@ -2,7 +2,7 @@
 Private Pytorch implementation of [CLASS-SWAP LEARNING FOR CONDITIONAL GENERATIVE ADVERSARIAL NETWORKS VIA REINITIALIZATION OF CLASS-AWARE SYNAPSES]
 
 
-<img src=https://github.com/mshdjren/RCAS/blob/master/figures/main_figure.jpg height="500" width="900"> 
+<img src=https://github.com/mshdjren/RCAS/blob/master/figures/main_figure.jpg> 
 <img src=https://github.com/mshdjren/RCAS/blob/master/figures/figure_sample.jpg>
 
 ## Abstract
