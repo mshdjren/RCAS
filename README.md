@@ -7,11 +7,14 @@ In continual learning research, the primary goal is to learn new knowledge while
 Our method especially focuses on conditional Generative Adversarial Networks (cGANs) that re-initializes important weights in generating the target classes by adapting gradientbased algorithm. In our experimental results, class-swap learning shows faster convergence rate in learning the new classes when compared to standard fine-tuning in terms of qualitative measurements.
 
 ## Methods
+- **Overview of Class-swap learning for cGANs.**
 <img src=https://github.com/mshdjren/RCAS/blob/master/figures/main_figure.jpg> 
 
 ## Results
+- ** "Sample images when overwriting target class 9 with new class 0 (MNIST: digit 9 to digit 0, FashionMNIST: Ankle boot to T-shirt/top and CIFAR-10: truck to airplane)"
 <img src=https://github.com/mshdjren/RCAS/blob/master/figures/figure_sample.jpg>
 
+- **Different top-k ratio re-initialization for generator pre-trained on FashionMNIST.**
 <img src=https://github.com/mshdjren/RCAS/blob/master/figures/figure_top_ratio.jpg>
 
 ## Requirements:
