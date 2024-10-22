@@ -14,7 +14,7 @@ Our method especially focuses on conditional Generative Adversarial Networks (cG
 - **Sample images when overwriting target class 9 with new class 0.** 
 <img src=https://github.com/mshdjren/RCAS/blob/master/figures/figure_sample.jpg>
 MNIST: digit 9 to digit 0, FashionMNIST: Ankle boot to T-shirt/top and CIFAR-10: truck to airplane
-
+ <br/>
 - **Different top-k ratio re-initialization for generator pre-trained on FashionMNIST.**
 <img src=https://github.com/mshdjren/RCAS/blob/master/figures/figure_top_ratio.jpg>
 
