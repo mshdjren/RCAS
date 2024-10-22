@@ -1,7 +1,6 @@
 # Target-class-Unlearning
-Official Pytorch implementation of [Target Class Unlearning for Conditional Generative Adversarial Networks] (IPIU 2023).
+Private Pytorch implementation of [CLASS-SWAP LEARNING FOR CONDITIONAL GENERATIVE ADVERSARIAL NETWORKS VIA REINITIALIZATION OF CLASS-AWARE SYNAPSES]
 
-Authors: Sanghyuk Moon, Je Hyeong Hong
 
 <img src=https://github.com/mshdjren/RCAS/figures/main_figure.jpg height="500" width="900"> 
 <img src=https://github.com/mshdjren/RCAS/figures/figure_sample.jpg>
