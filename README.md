@@ -19,11 +19,12 @@ Our method especially focuses on conditional Generative Adversarial Networks (cG
 ## Results
 - **Sample images when overwriting target class 9 with new class 0.**
 <img src=https://github.com/mshdjren/RCAS/blob/master/figures/figure_sample.jpg>
- 1) MNIST: digit 9 to digit 0
 
- 2) FashionMNIST: Ankle boot to T-shirt/top
+  1) MNIST: digit 9 to digit 0
 
- 3) CIFAR-10: truck to airplane
+  2) FashionMNIST: Ankle boot to T-shirt/top
+
+  3) CIFAR-10: truck to airplane
 
 - **Different top-k ratio re-initialization for generator pre-trained on FashionMNIST.**
 <img src=https://github.com/mshdjren/RCAS/blob/master/figures/figure_top_ratio.jpg>
@@ -65,5 +66,4 @@ $ python3 acgan.py
 ````
 
 ## License
-A patent application for XMP has been submitted and is under review for registration. XMP is licensed under the CC-BY-NC-SA-4.0 license limiting any commercial use.
-
+This project is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
