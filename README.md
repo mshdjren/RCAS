@@ -49,18 +49,16 @@ scikit-image
 This code has been tested with Ubuntu 20.04, A100 GPUs with CUDA 12.2, Python 3.8, Pytorch 1.10.
 
 ## How to run our code
-We borrowed most of the implementation of conditional generation framework from PyTorch-GAN (https://github.com/eriklindernoren/PyTorch-GAN) and PyTorch-StudioGAN (https://github.com/POSTECH-CVLab/PyTorch-StudioGAN) repository.
+We borrowed most of the implementation of conditional generation framework from PyTorch-StudioGAN (https://github.com/POSTECH-CVLab/PyTorch-StudioGAN) repository.
 
 - **Training (Class swap learning for target class)**
 ````
-$ cd implementations/acgan/
-$ python3 acgan.py
+CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -hdf5 -l -std_stat -std_max STD_MAX -std_step STD_STEP -metrics is fid prdc -ref "train" -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH -mpc --post_resizer "friendly" --eval_backbone "InceptionV3_tf"
 ````
 
 - **Testing (generating target/remaining classes images)**
 ````
-$ cd implementations/acgan/
-$ python3 acgan.py
+CUDA_VISIBLE_DEVICES=0,...,N python3 src/main.py -v -cfg CONFIG_PATH -ckpt CKPT -save SAVE_DIR
 ````
 
 ## License
