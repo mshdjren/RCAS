@@ -49,9 +49,8 @@ scikit-image
 This code has been tested with Ubuntu 20.04, A100 GPUs with CUDA 12.2, Python 3.8, Pytorch 1.10.
 
 ## How to run our code
-Our code built upon the repository of PyTorch-GAN.
 
-We borrowed most of the implementation of conditional generation framework from PyTorch-GAN repository.
+We borrowed most of the implementation of conditional generation framework from PyTorch-GAN repository.(https://github.com/eriklindernoren/Keras-GAN)
 
 - **Training (Target-class unleraning for specific class)**
 ````
