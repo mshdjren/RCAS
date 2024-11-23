@@ -8,7 +8,8 @@ Our method especially focuses on conditional Generative Adversarial Networks (cG
 
 ## Methods
 - **Overview of Class-swap learning for cGANs.**
-<img src=https://github.com/mshdjren/RCAS/blob/master/figures/main_figure.jpg> 
+<img src=https://github.com/mshdjren/RCAS/blob/master/figures/main_figure.jpg>
+
  1) Estimate the importannce of each pre-trained generator and discriminator weights by calculating the gradients of each weights in inference the images of target class
 
  2) Select the important weight above the arbitrary threshold for re-initialization
