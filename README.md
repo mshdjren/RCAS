@@ -49,7 +49,7 @@ scikit-image
 This code has been tested with Ubuntu 20.04, A100 GPUs with CUDA 12.2, Python 3.8, Pytorch 1.10.
 
 ## How to run our code
-We borrowed most of the implementation of conditional generation framework from PyTorch-StudioGAN (https://github.com/POSTECH-CVLab/PyTorch-StudioGAN) repository.
+We borrowed most of the implementation of conditional generation framework from [PyTorch-StudioGAN](https://github.com/POSTECH-CVLab/PyTorch-StudioGAN) repository.
 
 - **Training (Class swap learning for target class)**
 ````
