@@ -50,7 +50,7 @@ This code has been tested with Ubuntu 20.04, A100 GPUs with CUDA 12.2, Python 3.
 
 ## How to run our code
 
-We borrowed most of the implementation of conditional generation framework from PyTorch-GAN repository.(https://github.com/eriklindernoren/Keras-GAN)
+We borrowed most of the implementation of conditional generation framework from PyTorch-GAN (https://github.com/eriklindernoren/PyTorch-GAN) repository.
 
 - **Training (Target-class unleraning for specific class)**
 ````
