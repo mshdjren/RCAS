@@ -62,4 +62,4 @@ CUDA_VISIBLE_DEVICES=0,...,N python3 src/main.py -v -cfg CONFIG_PATH -ckpt CKPT 
 ````
 
 ## License
-This project is licensed under the Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License.
+This project is an open-source library under the MIT license (MIT). 
