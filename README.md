@@ -29,37 +29,19 @@ Our method especially focuses on conditional Generative Adversarial Networks (cG
 - **Different top-k ratio re-initialization for generator pre-trained on FashionMNIST.**
 <img src=https://github.com/mshdjren/RCAS/blob/master/figures/figure_top_ratio.jpg>
 
-## Requirements:
-$ git clone https://github.com/eriklindernoren/PyTorch-GAN
-
-$ cd PyTorch-GAN/
-
-$ sudo pip3 install -r requirements.txt
-
-````
-torch>=0.4.0
-torchvision
-matplotlib
-numpy
-scipy
-pillow
-urllib3
-scikit-image
-````
-This code has been tested with Ubuntu 20.04, A100 GPUs with CUDA 12.2, Python 3.8, Pytorch 1.10.
-
 ## How to run our code
 We borrowed most of the implementation of conditional generation framework from [PyTorch-StudioGAN](https://github.com/POSTECH-CVLab/PyTorch-StudioGAN) repository.
+This code has been tested with Ubuntu 20.04, A100 GPUs with CUDA 12.2, Python 3.8, Pytorch 1.10.
 
 - **Training (Class swap learning for target class)**
 ````
 CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH
 ````
-- **"Training specific number of front layers of generator and discriminator (from FreezeD)" **
+- **"Training specific number of front layers of generator and discriminator (from FreezeD)"**
 ````
 CUDA_VISIBLE_DEVICES=0,...,N python3 src/main.py -t --freezeD FREEZED -ckpt SOURCE_CKPT -cfg TARGET_CONFIG_PATH -data DATA_PATH -save SAVE_PATH
 ````
-- **"Re-initialize only Top-k weights of generator and discriminator" **
+- **"Different top-k ratio re-initialization"**
 ````
 CUDA_VISIBLE_DEVICES=0,...,N python3 src/main.py -t --freezeD FREEZED -ckpt SOURCE_CKPT -cfg TARGET_CONFIG_PATH -data DATA_PATH -save SAVE_PATH
 ````
