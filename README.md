@@ -38,13 +38,16 @@ This code has been tested with Ubuntu 20.04, A100 GPUs with CUDA 12.2, Python 3.
 ````
 CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH -mas 
 ````
-- **Training specific number of front layers of generator and discriminator (from FreezeD)**
+- **Training specific number of front layers of generator and discriminator**
+
+  * If re-initialize the only first layer, the `selectG_blocks` variable is 0,1 (same for discriminator).
+
 ````
-CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH -mas -freezeD 
+CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH -mas -selectG_blocks G_BLOCKS -selectD_blocks D_BLOCKS
 ````
 - **Different top-k ratio re-initialization"**
 
-  *If re-initialize the top 50% weights based on importance, the `selectG_D_topk_ratio` variable is defined as 2 in the code as $\frac{100}{topk \textunderscore ratio}$.
+  * If re-initialize the top 50% generator weights based on importance, the `selectG_topk_ratio` variable is defined as 2 in the code as $\frac{100}{topk \textunderscore ratio}$ (same for discriminator).
 
 ````
 CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH -mas -selectG_topk_ratio G_TOPK_RATIO -selectD_topk_ratio D_TOPK_RATIO
