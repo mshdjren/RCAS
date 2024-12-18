@@ -40,7 +40,7 @@ CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_P
 ````
 - **Training specific number of front layers of generator and discriminator**
 
-  * If re-initialize the only first layer, the `selectG_blocks` variable is 0,1 (same for discriminator).
+  * If re-initialize the only first two generator blocks, the `selectG_blocks` variable is 0,1 (same for discriminator).
 
 ````
 CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH -mas -selectG_blocks G_BLOCKS -selectD_blocks D_BLOCKS
