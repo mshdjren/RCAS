@@ -43,7 +43,7 @@ CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_P
 CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH -mas -freezeD 
 ````
 - **Different top-k ratio re-initialization"**
--  If re-initialize the top 50% weights based on importance, `selectG_D_topk_ratio` variable is defined 2 in the code as $\frac{100\%}{selectG\_D\_topk\_ratio}$
+If re-initialize the top 50% weights based on importance, the `selectG_D_topk_ratio` variable is defined as 2 in the code as $\frac{100\%}{selectG\_D\_topk\_ratio}$
 ````
 CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH -mas -selectG_topk_ratio G_TOPK_RATIO -selectD_topk_ratio D_TOPK_RATIO
 ````
