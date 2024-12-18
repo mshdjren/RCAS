@@ -12,9 +12,9 @@ Our method especially focuses on conditional Generative Adversarial Networks (cG
 
  1) Estimate the importannce $\Omega_{ij}^{g}$ , $\Omega_{ij}^{d}$ of each pre-trained generator and discriminator weights by calculating the gradients of each weights in inference the images of target class
 
- 2) Select the important weight $\w_{ij}^{g}$ , $\w_{ij}^{d}$ above the arbitrary threshold for re-initialization
+ 2) Select the important weight $w_{ij}^{g}$ , $w_{ij}^{d}$ above the arbitrary threshold for re-initialization
   
- 3) Re-iniialize the selected weights $\w_{ij}^{g}$ , $\w_{ij}^{d}$ of pre-trained generator and discriminator to 0 for forgetting the target class
+ 3) Re-iniialize the selected weights $w_{ij}^{g}$ , $w_{ij}^{d}$ of pre-trained generator and discriminator to 0 for forgetting the target class
 
 ## Results
 - **Sample images when overwriting target class 9 with new class 0.**
