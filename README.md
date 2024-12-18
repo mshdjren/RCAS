@@ -53,9 +53,16 @@ We borrowed most of the implementation of conditional generation framework from 
 
 - **Training (Class swap learning for target class)**
 ````
-CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -hdf5 -l -std_stat -std_max STD_MAX -std_step STD_STEP -metrics is fid prdc -ref "train" -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH -mpc --post_resizer "friendly" --eval_backbone "InceptionV3_tf"
+CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH
 ````
-
+- **"Training specific number of front layers of generator and discriminator (from FreezeD)" **
+````
+CUDA_VISIBLE_DEVICES=0,...,N python3 src/main.py -t --freezeD FREEZED -ckpt SOURCE_CKPT -cfg TARGET_CONFIG_PATH -data DATA_PATH -save SAVE_PATH
+````
+- **"Re-initialize only Top-k weights of generator and discriminator" **
+````
+CUDA_VISIBLE_DEVICES=0,...,N python3 src/main.py -t --freezeD FREEZED -ckpt SOURCE_CKPT -cfg TARGET_CONFIG_PATH -data DATA_PATH -save SAVE_PATH
+````
 - **Testing (generating target/remaining classes images)**
 ````
 CUDA_VISIBLE_DEVICES=0,...,N python3 src/main.py -v -cfg CONFIG_PATH -ckpt CKPT -save SAVE_DIR
