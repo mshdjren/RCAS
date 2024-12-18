@@ -38,11 +38,11 @@ This code has been tested with Ubuntu 20.04, A100 GPUs with CUDA 12.2, Python 3.
 ````
 CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH
 ````
-- **"Training specific number of front layers of generator and discriminator (from FreezeD)"**
+- **Training specific number of front layers of generator and discriminator (from FreezeD)**
 ````
 CUDA_VISIBLE_DEVICES=0,...,N python3 src/main.py -t --freezeD FREEZED -ckpt SOURCE_CKPT -cfg TARGET_CONFIG_PATH -data DATA_PATH -save SAVE_PATH
 ````
-- **"Different top-k ratio re-initialization"**
+- **Different top-k ratio re-initialization"**
 ````
 CUDA_VISIBLE_DEVICES=0,...,N python3 src/main.py -t --freezeD FREEZED -ckpt SOURCE_CKPT -cfg TARGET_CONFIG_PATH -data DATA_PATH -save SAVE_PATH
 ````
