@@ -51,4 +51,4 @@ CUDA_VISIBLE_DEVICES=0,...,N python3 src/main.py -v -cfg CONFIG_PATH -ckpt CKPT 
 ````
 
 ## License
-This project is an open-source library under the MIT license (MIT). 
+This project is an open-source library under the MIT license (MIT). However, portions of the library are avaiiable under distinct license terms: StyleGAN2, StyleGAN2-ADA, and StyleGAN3 are licensed under [NVIDIA source code license](https://github.com/POSTECH-CVLab/PyTorch-StudioGAN/blob/master/LICENSE-NVIDIA), and PyTorch-FID is licensed under [Apache License](https://github.com/POSTECH-CVLab/PyTorch-StudioGAN/blob/master/src/metrics/fid.py), same as mentioned by [PyTorch-StudioGAN](https://github.com/POSTECH-CVLab/PyTorch-StudioGAN). 
