@@ -36,19 +36,20 @@ This code has been tested with Ubuntu 20.04, A100 GPUs with CUDA 12.2, Python 3.
 
 - **Training (Class swap learning for target class)**
 ````
-CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH
+CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH -mas 
 ````
 - **Training specific number of front layers of generator and discriminator (from FreezeD)**
 ````
-CUDA_VISIBLE_DEVICES=0,...,N python3 src/main.py -t --freezeD FREEZED -ckpt SOURCE_CKPT -cfg TARGET_CONFIG_PATH -data DATA_PATH -save SAVE_PATH
+CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH -mas -freezeD 
 ````
 - **Different top-k ratio re-initialization"**
+(If re-initialize the top 50% weights based on importance, the selectG,D_topk-ratio variable is defined 2 in the code as $\frac{100\%}{selectG,D_topk-ratio}$)
 ````
-CUDA_VISIBLE_DEVICES=0,...,N python3 src/main.py -t --freezeD FREEZED -ckpt SOURCE_CKPT -cfg TARGET_CONFIG_PATH -data DATA_PATH -save SAVE_PATH
+CUDA_VISIBLE_DEVICES=0 python3 src/main.py -t -metrics is fid prdc -cfg CONFIG_PATH -data DATA_PATH -save SAVE_PATH -mas -selectG_topk_ratio G_TOPK_RATIO -selectD_topk_ratio D_TOPK_RATIO
 ````
 - **Testing (generating target/remaining classes images)**
 ````
-CUDA_VISIBLE_DEVICES=0,...,N python3 src/main.py -v -cfg CONFIG_PATH -ckpt CKPT -save SAVE_DIR
+CUDA_VISIBLE_DEVICES=0 python3 src/main.py -v -cfg CONFIG_PATH -ckpt CKPT -save SAVE_DIR
 ````
 
 ## License
